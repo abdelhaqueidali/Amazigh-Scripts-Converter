@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tifinagh Script Converter</title>
+    <link rel="stylesheet" href="style.css">  <!-- Link to external CSS -->
+    <style>
+   /* (Your CSS - No changes) */
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f8f9fa;
+        color: #343a40;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+    }
+
+    .container {
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+        width: 90%;
+        max-width: 800px;
+        text-align: center;
+    }
+
+    header {
+        margin-bottom: 40px;
+    }
+
+    h1 {
+        color: #343a40;
+        font-size: 2.2em;
+        margin-bottom: 0.5em;
+    }
+
+    .converter-section, .import-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+        margin-bottom: 30px;
+    }
+
+    .input-group {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    label {
+        font-weight: 600;
+        margin-bottom: 8px;
+        text-align: left;
+        color: #495057;
+    }
+
+    textarea {
+        padding: 12px;
+        border: 1px solid #ced4da;
+        border-radius: 6px;
+        resize: vertical;
+        min-height: 180px;
+        font-size: 16px;
+        transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+
+    textarea:focus {
+        border-color: #80bdff;
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+    .button-group {
+        display: flex;
+        justify-content: flex-start;
+        gap: 10px;
+        margin-top: 10px;
+    }
+    .button-group button {
+        padding: 8px 16px;
+        background-color: #e9ecef;
+        color: #495057;
+        border: 1px solid #ced4da;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, color 0.2s ease-in-out;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .button-group button:hover {
+        background-color: #ced4da;
+        border-color: #adb5bd;
+        color: #212529;
+    }
+
+
+    .conversion-options {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        width: 100%;
+        flex-wrap: wrap; /* Allow wrapping for smaller screens */
+
+    }
+
+
+    select, .primary-button {
+        padding: 10px 15px;
+        border: 1px solid #ced4da;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+    .conversion-options select {
+        flex-grow:1;
+        margin-bottom: 10px; /* Add margin for spacing on smaller screens */
+    }
+    select:focus, .primary-button:focus {
+        border-color: #80bdff;
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+    /* Primary Button Style */
+    .primary-button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        font-weight: 500;
+        margin-bottom: 10px; /* Add margin for spacing on smaller screens */
+
+
+    }
+
+    .primary-button:hover {
+        background-color: #0056b3;
+    }
+
+    /* File Input Styling */
+    #file-input {
+        display: none;
+    }
+
+    .file-input-label {
+        background-color: #e9ecef;
+        color: #495057;
+        padding: 10px 15px;
+        border: 1px solid #ced4da;
+        border-radius: 6px;
+        cursor: pointer;
+        display: inline-block;
+        transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+        margin-top:10px;
+    }
+
+    .file-input-label:hover {
+        background-color: #dee2e6;
+        border-color: #adb5bd;
+    }
+
+    .file-input-label span {
+        margin-right: 10px;
+    }
+
+
+    /* Tooltip Styles */
+    .tooltip {
+        position: relative;
+        display: inline-block;
+    }
+
+    .tooltip[title]:hover::before {
+        content: attr(title);
+        position: absolute;
+        bottom: 120%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgba(52, 58, 64, 0.9);
+        color: #fff;
+        padding: 6px 12px;
+        border-radius: 6px;
+        white-space: nowrap;
+        z-index: 1;
+        font-size: 0.85em;
+    }
+
+    .tooltip[title]:hover::after {
+        content: '';
+        position: absolute;
+        bottom: 105%;
+        left: 50%;
+        margin-left: -6px;
+        border-width: 6px;
+        border-style: solid;
+        border-color: rgba(52, 58, 64, 0.9) transparent transparent transparent;
+    }
+
+    /* Checkbox styles */
+    .checkbox-container {
+        display: none; /* Initially hidden */
+        align-items: center;
+        margin-left: 15px;
+        margin-bottom: 10px;
+    }
+
+    .checkbox-container-x2 {
+        display: none;
+        align-items: center;
+        margin-left: 15px;
+        margin-bottom: 10px;
+    }
+
+    .checkbox-container-shwa { /* Corrected class name */
+        display: none;
+        align-items: center;
+        margin-left: 15px;
+        margin-bottom: 10px;
+    }
+     .checkbox-container-e-acute { /* Corrected class name */
+        display: none;
+        align-items: center;
+        margin-left: 15px;
+        margin-bottom: 10px;
+    }
+
+    .checkbox-container input[type="checkbox"],
+    .checkbox-container-x2 input[type="checkbox"],
+    .checkbox-container-shwa input[type="checkbox"], /* Corrected selector */
+    .checkbox-container-e-acute input[type="checkbox"]
+     {
+        margin-right: 5px;
+    }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Tifinagh Script Converter</h1>
+        </header>
+
+        <div class="converter-section">
+            <div class="input-group">
+                <label for="input-text">Input Text:</label>
+                <textarea id="input-text" placeholder="Enter text here..."></textarea>
+                <div class="button-group">
+                    <button id="copy-input" class="tooltip" title="Copy">Copy</button>
+                    <button id="paste-input" class="tooltip" title="Paste">Paste</button>
+                    <button id="clear-input" class="tooltip" title="Clear">Clear</button>
+                </div>
+            </div>
+
+            <div class="conversion-options">
+                <label for="conversion-type">Conversion:</label>
+                <select id="conversion-type">
+                    <option value="tifinagh-to-latin">Tifinagh to Latin</option>
+                    <option value="latin-to-tifinagh">Latin to Tifinagh</option>
+                    <option value="tifinagh-to-ircam">Tifinagh to IRCAM OPV</option>
+                    <option value="ircam-to-tifinagh">IRCAM OPV to Tifinagh</option>
+                    <option value="tifinagh-to-tawalt">Tifinagh to Tawalt OPV</option>
+                    <option value="tawalt-to-tifinagh">Tawalt OPV to Tifinagh</option>
+                    <option value="tifinagh-to-ipa">Tifinagh to IPA</option>
+                    <option value="tifinagh-to-tifinagh">Tifinagh to Tifinagh (Not supported yet)</option>
+                    <option value="tifinagh-to-imouhagh">Tifinagh to Imouhagh Latin</option>
+                    <option value="imouhagh-to-tifinagh">Imouhagh Latin to Tifinagh</option>
+                </select>
+
+                <!-- Checkboxes -->
+                <div class="checkbox-container" id="remove-vowel-container">
+                    <input type="checkbox" id="remove-vowel-e">
+                    <label for="remove-vowel-e">Remove 'e'</label>
+                </div>
+                <div class="checkbox-container-shwa" id="remove-shwa-container">
+                    <input type="checkbox" id="remove-shwa">
+                    <label for="remove-shwa">Remove 'ə'</label>
+                </div>
+                 <div class="checkbox-container-e-acute" id="remove-e-acute-container">
+                    <input type="checkbox" id="remove-e-acute">
+                    <label for="remove-e-acute">Remove 'é'</label>
+                </div>
+                <div class="checkbox-container-x2" id="x2-spacing-container">
+                   <input type="checkbox" id="x2-spacing">
+                   <label for="x2-spacing">x2 Spacing</label>
+               </div>
+            </div>
+
+            <div class="input-group">
+                <label for="output-text">Output Text:</label>
+                <textarea id="output-text" placeholder="Converted text will appear here..." readonly></textarea>
+                 <div class="button-group">
+                    <button id="copy-output" class="tooltip" title="Copy">Copy</button>
+                    <button id="clear-output" class="tooltip" title="Clear">Clear</button>
+                    <button id="export-output" class="tooltip" title="Export as TXT">Export</button>
+                </div>
+            </div>
+        </div>
+
+         <div class="import-section">
+           <label for="file-input" class="file-input-label">
+                <span>Choose File</span>
+                <input type="file" id="file-input" accept=".txt">
+            </label>
+
+            <button id="import-button" class="primary-button">Import</button>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const inputText = document.getElementById('input-text');
+        const outputText = document.getElementById('output-text');
+        const conversionType = document.getElementById('conversion-type');
+        const copyInputButton = document.getElementById('copy-input');
+        const pasteInputButton = document.getElementById('paste-input');
+        const copyOutputButton = document.getElementById('copy-output');
+        const exportOutputButton = document.getElementById('export-output');
+        const clearInputButton = document.getElementById('clear-input');
+        const clearOutputButton = document.getElementById('clear-output');
+        const fileInput = document.getElementById('file-input');
+        const importButton = document.getElementById('import-button');
+        const removeVowelCheckbox = document.getElementById('remove-vowel-e');
+        const removeVowelContainer = document.getElementById('remove-vowel-container');
+        const removeShwaCheckbox = document.getElementById('remove-shwa');
+        const removeShwaContainer = document.getElementById('remove-shwa-container');
+        const removeEAcuteCheckbox = document.getElementById('remove-e-acute');
+        const removeEAcuteContainer = document.getElementById('remove-e-acute-container');
+        const x2SpacingCheckbox = document.getElementById('x2-spacing');
+        const x2SpacingContainer = document.getElementById('x2-spacing-container');
+
+        const conversionMaps = {
+        'tifinagh-to-latin': {
+'ⴰ': 'a',
+'ⴱ': 'b',
+'ⴳ': 'g',
+'ⴷ': 'd',
+'ⴹ': 'ḍ',
+'ⴻ': 'e',
+'ⴼ': 'f',
+'ⴽ': 'k',
+'ⵀ': 'h',
+'ⵃ': 'ḥ',
+'ⵄ': 'ɛ',
+'ⵅ': 'x',
+'ⵇ': 'q',
+'ⵉ': 'i',
+'ⵊ': 'j',
+'ⵍ': 'l',
+'ⵎ': 'm',
+'ⵏ': 'n',
+'ⵓ': 'u',
+'ⵔ': 'r',
+'ⵕ': 'ṛ',
+'ⵖ': 'ɣ',
+'ⵙ': 's',
+'ⵚ': 'ṣ',
+'ⵛ': 'c',
+'ⵜ': 't',
+'ⵟ': 'ṭ',
+'ⵡ': 'w',
+'ⵢ': 'y',
+'ⵣ': 'z',
+'ⵥ': 'ẓ',
+'ⵯ': 'ʷ'
+},
+        'latin-to-tifinagh': {
+'a': 'ⴰ',
+'b': 'ⴱ',
+'g': 'ⴳ',
+'d': 'ⴷ',
+'ḍ': 'ⴹ',
+'e': 'ⴻ',
+'f': 'ⴼ',
+'k': 'ⴽ',
+'h': 'ⵀ',
+'ḥ': 'ⵃ',
+'ɛ': 'ⵄ',
+'ε': 'ⵄ',
+'x': 'ⵅ',
+'q': 'ⵇ',
+'i': 'ⵉ',
+'j': 'ⵊ',
+'l': 'ⵍ',
+'m': 'ⵎ',
+'n': 'ⵏ',
+'u': 'ⵓ',
+'r': 'ⵔ',
+'ṛ': 'ⵕ',
+'ɣ': 'ⵖ',
+'γ': 'ⵖ',
+'s': 'ⵙ',
+'ṣ': 'ⵚ',
+'c': 'ⵛ',
+'t': 'ⵜ',
+'ṭ': 'ⵟ',
+'w': 'ⵡ',
+'y': 'ⵢ',
+'z': 'ⵣ',
+'ẓ': 'ⵥ',
+'ʷ': 'ⵯ',
+'ᵒ': 'ⵯ',
+'°': 'ⵯ',
+'ǧǧ': 'ⵊⵊ',
+'čč': 'ⵛⵛ',
+'ǧ': 'ⵊⵊ',
+'č': 'ⵛⵛ',
+'ž': 'ⵣⵣ',
+'ž': 'ⵣⵣ',
+'ř': 'ⵍ',
+'A': 'ⴰ',
+'B': 'ⴱ',
+'G': 'ⴳ',
+'D': 'ⴷ',
+'Ḍ': 'ⴹ',
+'E': 'ⴻ',
+'F': 'ⴼ',
+'K': 'ⴽ',
+'H': 'ⵀ',
+'Ḥ': 'ⵃ',
+'Ɛ': 'ⵄ',
+'Ε': 'ⵄ',
+'X': 'ⵅ',
+'Q': 'ⵇ',
+'I': 'ⵉ',
+'J': 'ⵊ',
+'L': 'ⵍ',
+'M': 'ⵎ',
+'N': 'ⵏ',
+'U': 'ⵓ',
+'R': 'ⵔ',
+'Ṛ': 'ⵕ',
+'Ɣ': 'ⵖ',
+'Γ': 'ⵖ',
+'S': 'ⵙ',
+'Ṣ': 'ⵚ',
+'C': 'ⵛ',
+'T': 'ⵜ',
+'Ṭ': 'ⵟ',
+'W': 'ⵡ',
+'Y': 'ⵢ',
+'Z': 'ⵣ',
+'Ẓ': 'ⵥ',
+'ǦǦ': 'ⵊⵊ',
+'ČČ': 'ⵛⵛ',
+'Ǧ': 'ⵊⵊ',
+'Č': 'ⵛⵛ',
+'Ž': 'ⵣⵣ',
+'Ž': 'ⵣⵣ',
+'Ř': 'ⵍ'
+},
+        'tifinagh-to-ircam': {
+'ⴰ': 'a',
+'ⴱ': 'b',
+'ⴳ': 'g',
+'ⴳⵯ': 'å',
+'ⴷ': 'd',
+'ⴹ': 'ä',
+'ⴻ': 'e',
+'ⴼ': 'f',
+'ⴽ': 'k',
+'ⴽⵯ': 'æ',
+'ⵀ': 'h',
+'ⵃ': 'p',
+'ⵄ': 'o',
+'ⵅ': 'x',
+'ⵇ': 'q',
+'ⵉ': 'i',
+'ⵊ': 'j',
+'ⵍ': 'l',
+'ⵎ': 'm',
+'ⵏ': 'n',
+'ⵓ': 'u',
+'ⵔ': 'r',
+'ⵕ': 'ë',
+'ⵖ': 'v',
+'ⵙ': 's',
+'ⵚ': 'ã',
+'ⵛ': 'c',
+'ⵜ': 't',
+'ⵟ': 'ï',
+'ⵡ': 'w',
+'ⵢ': 'y',
+'ⵣ': 'z',
+'ⵥ': 'ç'
+},
+        'ircam-to-tifinagh': {
+'A': 'ⴰ',
+'B': 'ⴱ',
+'C': 'ⵛ',
+'D': 'ⴷ',
+'E': 'ⴻ',
+'F': 'ⴼ',
+'G': 'ⴳ',
+'H': 'ⵀ',
+'I': 'ⵉ',
+'J': 'ⵊ',
+'K': 'ⴽ',
+'L': 'ⵍ',
+'M': 'ⵎ',
+'N': 'ⵏ',
+'O': 'ⵄ',
+'P': 'ⵃ',
+'Q': 'ⵇ',
+'R': 'ⵔ',
+'S': 'ⵙ',
+'T': 'ⵜ',
+'U': 'ⵓ',
+'V': 'ⵖ',
+'W': 'ⵡ',
+'X': 'ⵅ',
+'Y': 'ⵢ',
+'Z': 'ⵣ',
+'a': 'ⴰ',
+'b': 'ⴱ',
+'c': 'ⵛ',
+'d': 'ⴷ',
+'e': 'ⴻ',
+'f': 'ⴼ',
+'g': 'ⴳ',
+'h': 'ⵀ',
+'i': 'ⵉ',
+'j': 'ⵊ',
+'k': 'ⴽ',
+'l': 'ⵍ',
+'m': 'ⵎ',
+'n': 'ⵏ',
+'o': 'ⵄ',
+'p': 'ⵃ',
+'q': 'ⵇ',
+'r': 'ⵔ',
+'s': 'ⵙ',
+'t': 'ⵜ',
+'u': 'ⵓ',
+'v': 'ⵖ',
+'w': 'ⵡ',
+'x': 'ⵅ',
+'y': 'ⵢ',
+'z': 'ⵣ',
+'¢': 'ⵠ',
+'°': 'ⵯ',
+'×': 'ⵁ',
+'¥': 'ⵁ',
+'ß': 'ⴿ',
+'à': 'ⴺ',
+'À': 'ⴺ',
+'á': 'ⴴ',
+'Á': 'ⴴ',
+'â': 'ⴶ',
+'Â': 'ⴶ',
+'ã': 'ⵚ',
+'Ã': 'ⵚ',
+'ä': 'ⴹ',
+'Ä': 'ⴹ',
+'å': 'ⴳⵯ',
+'Å': 'ⴳⵯ',
+'æ': 'ⴽⵯ',
+'Æ': 'ⴽⵯ',
+'ç': 'ⵥ',
+'Ç': 'ⵥ',
+'è': 'ⵐ',
+'È': 'ⵐ',
+'é': 'ⵑ',
+'É': 'ⵑ',
+'ê': 'ⵘ',
+'Ê': 'ⵘ',
+'ë': 'ⵕ',
+'Ë': 'ⵕ',
+'ì': 'ⵂ',
+'Ì': 'ⵂ',
+'í': 'ⵆ',
+'Í': 'ⵆ',
+'î': 'ⵗ',
+'Î': 'ⵗ',
+'ï': 'ⵟ',
+'Ï': 'ⵟ',
+'ð': 'ⵖⵯ',
+'Ð': 'ⵖⵯ',
+'ñ': 'ⵒ',
+'Ñ': 'ⵒ',
+'ò': 'ⵇⵯ',
+'Ò': 'ⵇⵯ',
+'ó': 'ⵅⵯ',
+'Ó': 'ⵅⵯ',
+'ô': 'ⵈ',
+'Ô': 'ⵈ',
+'õ': 'ⴸ',
+'Õ': 'ⴸ',
+'ö': 'ⴾ',
+'Ö': 'ⴾ',
+'÷': 'ⵁ',
+'ø': 'ⴵ',
+'Ø': 'ⴵ',
+'ù': 'ⵝ',
+'Ù': 'ⵝ',
+'ú': 'ⵌ',
+'Ú': 'ⵌ',
+'û': 'ⵤ',
+'Û': 'ⵤ',
+'ü': 'ⵋ',
+'Ü': 'ⵋ',
+'ý': 'ⴲ',
+'Ý': 'ⴲ',
+'þ': 'ⵞ',
+'Þ': 'ⵞ',
+'ÿ': 'ⴿ',
+'Ÿ': 'ⵠ',
+'Š': 'ⵁ'
+},
+        'tifinagh-to-tawalt':{
+'ⴰ': 'a',
+'ⴱ': 'b',
+'ⴳ': 'g',
+'ⴳⵯ': 'G',
+'ⴷ': 'd',
+'ⴹ': 'D',
+'ⴻ': 'e',
+'ⴼ': 'f',
+'ⴽ': 'k',
+'ⴽⵯ': 'K',
+'ⵀ': 'h',
+'ⵃ': 'p',
+'ⵄ': 'o',
+'ⵅ': 'x',
+'ⵇ': 'q',
+'ⵉ': 'i',
+'ⵊ': 'j',
+'ⵍ': 'l',
+'ⵎ': 'm',
+'ⵏ': 'n',
+'ⵓ': 'u',
+'ⵔ': 'r',
+'ⵕ': 'R',
+'ⵖ': 'v',
+'ⵙ': 's',
+'ⵚ': 'S',
+'ⵛ': 'c',
+'ⵜ': 't',
+'ⵟ': 'T',
+'ⵡ': 'w',
+'ⵢ': 'y',
+'ⵣ': 'z',
+'ⵥ': 'Z'
+},
+        'tawalt-to-tifinagh':{
+'a': 'ⴰ',
+'b': 'ⴱ',
+'g': 'ⴳ',
+'G': 'ⴳⵯ',
+'d': 'ⴷ',
+'D': 'ⴹ',
+'e': 'ⴻ',
+'f': 'ⴼ',
+'k': 'ⴽ',
+'K': 'ⴽⵯ',
+'h': 'ⵀ',
+'p': 'ⵃ',
+'o': 'ⵄ',
+'x': 'ⵅ',
+'q': 'ⵇ',
+'i': 'ⵉ',
+'j': 'ⵊ',
+'l': 'ⵍ',
+'m': 'ⵎ',
+'n': 'ⵏ',
+'u': 'ⵓ',
+'r': 'ⵔ',
+'R': 'ⵕ',
+'v': 'ⵖ',
+'s': 'ⵙ',
+'S': 'ⵚ',
+'c': 'ⵛ',
+'t': 'ⵜ',
+'T': 'ⵟ',
+'w': 'ⵡ',
+'y': 'ⵢ',
+'z': 'ⵣ',
+'Z': 'ⵥ',
+'A': 'ⴰ',
+'B': 'ⴱ',
+'g': 'ⴳ',
+'G': 'ⴳⵯ',
+'d': 'ⴷ',
+'D': 'ⴹ',
+'E': 'ⴻ',
+'F': 'ⴼ',
+'k': 'ⴽ',
+'K': 'ⴽⵯ',
+'H': 'ⵀ',
+'P': 'ⵃ',
+'O': 'ⵄ',
+'X': 'ⵅ',
+'Q': 'ⵇ',
+'I': 'ⵉ',
+'J': 'ⵊ',
+'L': 'ⵍ',
+'M': 'ⵎ',
+'N': 'ⵏ',
+'U': 'ⵓ',
+'r': 'ⵔ',
+'R': 'ⵕ',
+'V': 'ⵖ',
+'s': 'ⵙ',
+'S': 'ⵚ',
+'C': 'ⵛ',
+'t': 'ⵜ',
+'T': 'ⵟ',
+'W': 'ⵡ',
+'Y': 'ⵢ',
+'z': 'ⵣ',
+'Z': 'ⵥ'
+},
+        'tifinagh-to-ipa':{
+'ⴰ': 'æ',
+'ⴱ': 'b',
+'ⴳ': 'g',
+'ⴳⵯ': 'gʷ',
+'ⴷ': 'd',
+'ⴹ': 'dˁ',
+'ⴻ': 'ə',
+'ⴼ': 'f',
+'ⴽ': 'k',
+'ⴽⵯ': 'kʷ',
+'ⵀ': 'h',
+'ⵃ': 'ħ',
+'ⵄ': 'ʕ',
+'ⵅ': 'x',
+'ⵇ': 'q',
+'ⵉ': 'ɪ',
+'ⵊ': 'ʒ',
+'ⵍ': 'l',
+'ⵎ': 'm',
+'ⵏ': 'n',
+'ⵓ': 'ʊ',
+'ⵔ': 'r',
+'ⵕ': 'rˁ',
+'ⵖ': 'ɣ',
+'ⵙ': 's',
+'ⵚ': 'sˁ',
+'ⵛ': 'ʃ',
+'ⵜ': 't',
+'ⵟ': 'tˁ',
+'ⵡ': 'w',
+'ⵢ': 'j',
+'ⵣ': 'z',
+'ⵥ': 'zˁ',
+'ⴱⴱ': 'b:',
+'ⴳⴳ': 'g:',
+'ⴷⴷ': 'd:',
+'ⴹⴹ': 'dˁ:',
+'ⴼⴼ': 'f:',
+'ⴽⴽ': 'k:',
+'ⵀⵀ': 'h:',
+'ⵃⵃ': 'ħ:',
+'ⵄⵄ': 'ʕ:',
+'ⵅⵅ': 'x:',
+'ⵇⵇ': 'q:',
+'ⵊⵊ': 'ʒ:',
+'ⵍⵍ': 'l:',
+'ⵎⵎ': 'm:',
+'ⵏⵏ': 'n:',
+'ⵔⵔ': 'r:',
+'ⵕⵕ': 'rˁ:',
+'ⵖⵖ': 'ɣ:',
+'ⵙⵙ': 's:',
+'ⵚⵚ': 'sˁ:',
+'ⵛⵛ': 'ʃ:',
+'ⵜⵜ': 't:',
+'ⵟⵟ': 'tˁ:',
+'ⵡⵡ': 'w:',
+'ⵢⵢ': 'j:',
+'ⵣⵣ': 'z:',
+'ⵥⵥ': 'zˁ:'
+},
+           'tifinagh-to-tifinagh':{
+               // ... (your tifinagh-to-tifinagh mapping) ...
+           },
+    'tifinagh-to-imouhagh': {
+    'ⴰ': 'a',
+    'ⴱ': 'b',
+    'ⴳ': 'g',
+    'ⴷ': 'd',
+    'ⴹ': 'ḍ',
+    'ⵦ': 'e',
+    'ⴻ': 'ǝ',
+    'ⴼ': 'f',
+    'ⴽ': 'k',
+    'ⵀ': 'h',
+    'ⵃ': 'ḥ',
+    'ⵄ': 'ɛ',
+    'ⵅ': 'x',
+    'ⵇ': 'q',
+    'ⵉ': 'i',
+    'ⵊ': 'j',
+    'ⵍ': 'l',
+    'ⵎ': 'm',
+    'ⵏ': 'n',
+    'ⵓ': 'u',
+    'ⵔ': 'r',
+    'ⵕ': 'ṛ',
+    'ⵖ': 'ɣ',
+    'ⵙ': 's',
+    'ⵚ': 'ṣ',
+    'ⵛ': 'c',
+    'ⵜ': 't',
+    'ⵟ': 'ṭ',
+    'ⵡ': 'w',
+    'ⵢ': 'y',
+    'ⵣ': 'z',
+    'ⵥ': 'ẓ',
+    'ⵯ': 'ʷ',
+    },
+    'imouhagh-to-tifinagh': {
+    'a': 'ⴰ',
+    'b': 'ⴱ',
+    'g': 'ⴳ',
+    'd': 'ⴷ',
+    'ḍ': 'ⴹ',
+    'e': 'ⵦ',
+    'ǝ': 'ⴻ',
+    'ə': 'ⴻ',
+    'f': 'ⴼ',
+    'k': 'ⴽ',
+    'h': 'ⵀ',
+    'ḥ': 'ⵃ',
+    'ɛ': 'ⵄ',
+    'x': 'ⵅ',
+    'q': 'ⵇ',
+    'i': 'ⵉ',
+    'j': 'ⵊ',
+    'l': 'ⵍ',
+    'm': 'ⵎ',
+    'n': 'ⵏ',
+    'u': 'ⵓ',
+    'r': 'ⵔ',
+    'ṛ': 'ⵕ',
+    'ɣ': 'ⵖ',
+    's': 'ⵙ',
+    'ṣ': 'ⵚ',
+    'c': 'ⵛ',
+    't': 'ⵜ',
+    'ṭ': 'ⵟ',
+    'w': 'ⵡ',
+    'y': 'ⵢ',
+    'z': 'ⵣ',
+    'ẓ': 'ⵥ',
+    'ʷ': 'ⵯ',
+    'A': 'ⴰ',
+    'B': 'ⴱ',
+    'G': 'ⴳ',
+    'D': 'ⴷ',
+    'Ḍ': 'ⴹ',
+    'E': 'ⵦ',
+    'F': 'ⴼ',
+    'K': 'ⴽ',
+    'H': 'ⵀ',
+    'Ḥ': 'ⵃ',
+    'Ɛ': 'ⵄ',
+    'X': 'ⵅ',
+    'Q': 'ⵇ',
+    'I': 'ⵉ',
+    'J': 'ⵊ',
+    'L': 'ⵍ',
+    'M': 'ⵎ',
+    'N': 'ⵏ',
+    'U': 'ⵓ',
+    'R': 'ⵔ',
+    'Ṛ': 'ⵕ',
+    'Ɣ': 'ⵖ',
+    'S': 'ⵙ',
+    'Ṣ': 'ⵚ',
+    'C': 'ⵛ',
+    'T': 'ⵜ',
+    'Ṭ': 'ⵟ',
+    'W': 'ⵡ',
+    'Y': 'ⵢ',
+    'Z': 'ⵣ',
+    'Ẓ': 'ⵥ',
+    'Ə': 'ⴻ',
+    'Ǝ': 'ⴻ',
+    'é': 'ⵦ',
+    'É': 'ⵦ',
+    'Γ': 'ⵖ',
+    'Ε': 'ⵄ',
+    'ᵒ': 'ⵯ',
+    '°': 'ⵯ',
+    'γ': 'ⵖ',
+    'ε': 'ⵄ'
+    }
+        };
+
+        function removeChars(text, map, charsToRemove) {
+            let result = "";
+            let i = 0;
+            while (i < text.length) {
+                let foundMatch = false;
+
+                // Check for digraphs/trigraphs FIRST
+                for (let keyLength = 4; keyLength > 0; keyLength--) {
+                    const potentialKey = text.substring(i, i + keyLength);
+                    if (map[potentialKey] && !charsToRemove.some(char => potentialKey.includes(char)) ) {
+                        result += potentialKey;
+                        i += keyLength;
+                        foundMatch = true;
+                        break;
+                    }
+                }
+
+                if (!foundMatch) {
+                    // Now simplified:  Just check if it's in charsToRemove
+                    if (charsToRemove.includes(text[i])) {
+                        i++; // Skip it
+                    } else {
+                        result += text[i]; // Keep it
+                        i++;
+                    }
+                }
+            }
+            return result;
+        }
+function convertText(text, map, removeVowelE, removeShwa, removeEAcute, x2Spacing) {
+    let processedText = text;
+
+    if (removeVowelE || removeShwa || removeEAcute) {
+        let charsToRemove = [];
+        if (removeVowelE) {
+            charsToRemove.push('e');
+            charsToRemove.push('E');
+        }
+        if (removeShwa) {
+            charsToRemove.push('ə');
+            charsToRemove.push('Ə');
+            charsToRemove.push('ǝ');
+            charsToRemove.push('Ǝ');
+        }
+        if (removeEAcute) {
+            charsToRemove.push('é');
+            charsToRemove.push('É');
+        }
+        processedText = removeChars(processedText, map, charsToRemove);
+    }
+
+    let result = '';
+    let i = 0;
+    let shouldCapitalize = true; // Start of text should be capitalized
+
+    const sentenceEnders = ['.', '!', '?'];
+
+    while (i < processedText.length) {
+
+        // Check for capitalization (beginning of text, after sentence enders/newlines).
+        if (shouldCapitalize || (i === 0)) {
+            shouldCapitalize = false; // Reset immediately.
+
+            let foundMatch = false;
+            for (let keyLength = 4; keyLength > 0; keyLength--) {
+                const potentialKey = processedText.substring(i, i + keyLength);
+                if (map[potentialKey]) {
+                    let mappedValue = map[potentialKey];
+
+                    // Capitalization (for tifinagh-to-latin and tifinagh-to-imouhagh).
+                    if ((map === conversionMaps['tifinagh-to-latin'] || map === conversionMaps['tifinagh-to-imouhagh'])) {
+                        mappedValue = mappedValue.charAt(0).toUpperCase() + mappedValue.slice(1);
+                    }
+                    // x2 Spacing (for tifinagh-to-tifinagh).
+                    if (x2Spacing && map === conversionMaps['tifinagh-to-tifinagh']) {
+                        mappedValue = mappedValue.split('').join('  ');
+                    }
+
+                    result += mappedValue;
+                    i += keyLength;
+                    foundMatch = true;
+                    break;
+                }
+            }
+            if (!foundMatch) {
+                result += processedText[i].toUpperCase(); // Capitalize the character.
+                i++;
+            }
+            // NO continue here!  This was the error.
+        } else { //  <--  ADD ELSE HERE
+            // Regular character processing (no capitalization).
+
+            let foundMatch = false;
+            for (let keyLength = 4; keyLength > 0; keyLength--) {
+                const potentialKey = processedText.substring(i, i + keyLength);
+                if (map[potentialKey]) {
+                    result += map[potentialKey];
+                    i += keyLength;
+                    foundMatch = true;
+                    break;
+                }
+            }
+
+            if (!foundMatch) {
+                result += processedText[i];
+                i++;
+            }
+        }
+
+        // Check if the *previous* character requires capitalization of the next.
+        if (i > 0) {
+            const prevChar = processedText[i - 1];
+
+            // Newline handling (skip newlines and spaces).
+            if (prevChar === '\n') {
+                while (i < processedText.length && (processedText[i] === '\n' || processedText[i] === ' ')) {
+                    result += processedText[i];
+                    i++;
+                }
+                shouldCapitalize = true; // Set flag for the next non-newline/space character.
+                // NO continue here.
+            }
+
+            // Sentence ender handling (skip spaces).
+            if (sentenceEnders.includes(prevChar)) {
+                while (i < processedText.length && processedText[i] === ' ') {
+                    result += ' ';
+                    i++;
+                }
+                shouldCapitalize = true;
+            }
+        }
+    }
+    return result;
+}
+
+        function updateVisibility() {
+            if (conversionType.value === 'latin-to-tifinagh') {
+                removeVowelContainer.style.display = 'flex';
+                removeShwaContainer.style.display = 'none';
+                removeEAcuteContainer.style.display = 'none';
+                x2SpacingContainer.style.display = 'none';
+            } else if (conversionType.value === 'imouhagh-to-tifinagh') {
+                removeVowelContainer.style.display = 'flex';
+                removeShwaContainer.style.display = 'flex';
+                removeEAcuteContainer.style.display = 'flex';
+                x2SpacingContainer.style.display = 'none';
+            }  else if (conversionType.value === 'tifinagh-to-tifinagh') {
+                x2SpacingContainer.style.display = 'flex';
+                removeVowelContainer.style.display = 'none';
+                removeShwaContainer.style.display = 'none';
+                removeEAcuteContainer.style.display = 'none';
+            }else {
+                removeVowelContainer.style.display = 'none';
+                removeShwaContainer.style.display = 'none';
+                removeEAcuteContainer.style.display = 'none';
+                x2SpacingContainer.style.display = 'none';
+            }
+        }
+
+        function performConversion() {
+            const selectedConversion = conversionType.value;
+            const map = conversionMaps[selectedConversion];
+            const removeVowelEOption = (selectedConversion === 'latin-to-tifinagh' || selectedConversion === 'imouhagh-to-tifinagh') && removeVowelCheckbox.checked;
+            const removeShwaOption = (selectedConversion === 'imouhagh-to-tifinagh') && removeShwaCheckbox.checked;
+            const removeEAcuteOption = (selectedConversion === 'imouhagh-to-tifinagh') && removeEAcuteCheckbox.checked;
+            const x2SpacingOption = (selectedConversion === 'tifinagh-to-tifinagh') && x2SpacingCheckbox.checked;
+
+
+            if (map) {
+                outputText.value = convertText(inputText.value, map, removeVowelEOption, removeShwaOption, removeEAcuteOption,x2SpacingOption);
+            } else {
+                outputText.value = "Conversion not supported.";
+            }
+        }
+
+        // Event Listeners
+        inputText.addEventListener('input', performConversion);
+        conversionType.addEventListener('change', () => {
+            updateVisibility();
+            performConversion();
+        });
+        removeVowelCheckbox.addEventListener('change', performConversion);
+        removeShwaCheckbox.addEventListener('change', performConversion);
+        removeEAcuteCheckbox.addEventListener('change', performConversion);
+        x2SpacingCheckbox.addEventListener('change', performConversion);
+
+        // ... (rest of your button event listeners - copy, paste, etc.) ...
+         copyInputButton.addEventListener('click', function() {
+            navigator.clipboard.writeText(inputText.value);
+        });
+
+        pasteInputButton.addEventListener('click', function() {
+           navigator.clipboard.readText()
+            .then(text => {
+                inputText.value = text;
+                 performConversion(); //convert after pasting
+            })
+            .catch(err => {
+                console.error('Failed to read clipboard contents: ', err);
+                inputText.value = "Could not paste from clipboard.";
+            });
+        });
+
+        copyOutputButton.addEventListener('click', function() {
+            navigator.clipboard.writeText(outputText.value);
+        });
+
+        // Export
+        exportOutputButton.addEventListener('click', function() {
+            const textToExport = outputText.value;
+            const blob = new Blob([textToExport], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'converted-text.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+
+         // Clear buttons
+        clearInputButton.addEventListener('click', () => {
+            inputText.value = '';
+            performConversion(); // Clear output as well
+        });
+
+        clearOutputButton.addEventListener('click', () => {
+            outputText.value = '';
+        });
+
+        //Import
+        importButton.addEventListener('click', () => {
+            const file = fileInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    inputText.value = e.target.result;
+                     performConversion(); //convert after importing
+                };
+                reader.readAsText(file);
+            } else {
+                alert("Please select a file to import.");
+            }
+        });
+
+        updateVisibility(); // Call on page load
+        document.querySelector('.container').addEventListener('submit', function(event) {
+            event.preventDefault();
+        });
+    });
+    </script>
+</body>
+</html>
