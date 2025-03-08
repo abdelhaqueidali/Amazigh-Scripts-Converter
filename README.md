@@ -6,7 +6,7 @@ This web-based tool provides a comprehensive set of options for converting betwe
 
 Access the advanced converter here: [https://abdelhaqueidali.github.io/Amazigh-Scripts-Converter/Advance.html](https://abdelhaqueidali.github.io/Amazigh-Scripts-Converter/Advance.html)
 
-## Basic Version (Most mentioned features are not available in this version)
+## Basic Version
 
 For a simplified version with only Tifinagh to Latin and Latin to Tifinagh conversion, see the basic version: [https://abdelhaqueidali.github.io/Amazigh-Scripts-Converter/iindex.html](https://abdelhaqueidali.github.io/Amazigh-Scripts-Converter/iindex.html)
 
@@ -24,11 +24,12 @@ For a simplified version with only Tifinagh to Latin and Latin to Tifinagh conve
     *   Latin (Imouhagh) to Tifinagh
  
 ## Scripts set explained
+
 *  Tifinagh : It refers the 33 main letters of the alphabet
 *  Latin : It refers to the Amazigh latin letters
 *  OPV : It refers to the old Latin mappings of the fonts of Ircam and Tawalt, they are two different ones, If you copy a Tifinagh text from a book, you get Latin script that is not the main Amazigh latin, but rather eather Ircam opv or Tawalt opv fonts. The naming of OPV refers to the letters OPV that are mapped to a completely different letters in Tifinagh, the rest makes sens.
 *  Latin (Imouhagh) : It refers to the Latin used by the Tuareg which have the letter ⴻ mapped to an upside down e, while normal e is mapped to a special vowel.
-
+For the mapping of each script with the other, check the html code, the script part. It has the mapping and there is where to preform any updates.
 *   **Advanced Text Manipulation:**
     *   **Remove 'e' and its variants:**  Optionally removes the Latin letter 'e' during Latin-to-Tifinagh and Imouhagh-to-Tifinagh conversions, except when it appears between two identical letters.  This reflects common practice in Tifinagh orthography.
     * **Smart Capitalization:** Capitalizes the first letter of sentences (after periods, question marks, and exclamation points) and at the start of the text, *even after conversion*.  It also correctly capitalizes the first letter after a newline.  This is particularly useful for Latin output.
