@@ -6,238 +6,271 @@
     <title>Tifinagh Script Converter</title>
     <link rel="stylesheet" href="style.css">  <!-- Link to external CSS -->
     <style>
-   /* (Your CSS - No changes) */
-    body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #f8f9fa;
-        color: #343a40;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-    }
+    /* Dark Theme CSS */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #121212; /* Dark background */
+    color: #e0e0e0; /* Light text */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
 
-    .container {
-        background-color: #fff;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        padding: 40px;
-        width: 90%;
-        max-width: 800px;
-        text-align: center;
-    }
+.container {
+    background-color: #1e1e1e; /* Slightly lighter container background */
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1); /* Lighter shadow */
+    padding: 40px;
+    width: 90%;
+    max-width: 800px;
+    text-align: center;
+}
 
-    header {
-        margin-bottom: 40px;
-    }
+header {
+    margin-bottom: 40px;
+}
 
-    h1 {
-        color: #343a40;
-        font-size: 2.2em;
-        margin-bottom: 0.5em;
-    }
+h1 {
+    color: #e0e0e0; /* Light text color */
+    font-size: 2.2em;
+    margin-bottom: 0.5em;
+}
 
-    .converter-section, .import-section {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 30px;
-        margin-bottom: 30px;
-    }
+.converter-section, .import-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 30px;
+}
 
-    .input-group {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-    }
+.input-group {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
 
-    label {
-        font-weight: 600;
-        margin-bottom: 8px;
-        text-align: left;
-        color: #495057;
-    }
+label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    text-align: left;
+    color: #adb5bd; /* Slightly darker label color */
+}
 
-    textarea {
-        padding: 12px;
-        border: 1px solid #ced4da;
-        border-radius: 6px;
-        resize: vertical;
-        min-height: 180px;
-        font-size: 16px;
-        transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    }
+textarea {
+    padding: 12px;
+    border: 1px solid #343a40; /* Darker border */
+    border-radius: 6px;
+    resize: vertical;
+    min-height: 180px;
+    font-size: 16px;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    background-color: #2a2a2a; /* Darker textarea background */
+    color: #e0e0e0; /* Light text */
+}
 
-    textarea:focus {
-        border-color: #80bdff;
-        outline: 0;
-        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-    }
-    .button-group {
-        display: flex;
-        justify-content: flex-start;
-        gap: 10px;
-        margin-top: 10px;
-    }
-    .button-group button {
-        padding: 8px 16px;
-        background-color: #e9ecef;
-        color: #495057;
-        border: 1px solid #ced4da;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, color 0.2s ease-in-out;
-        font-size: 14px;
-        font-weight: 500;
-    }
+textarea:focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
 
-    .button-group button:hover {
-        background-color: #ced4da;
-        border-color: #adb5bd;
-        color: #212529;
-    }
+.button-group {
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+    margin-top: 10px;
+}
+.button-group button {
+    padding: 8px 16px;
+    background-color: #343a40; /* Darker button background */
+    color: #e0e0e0; /* Light text */
+    border: 1px solid #495057; /* Slightly lighter border */
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, color 0.2s ease-in-out;
+    font-size: 14px;
+    font-weight: 500;
+}
 
-
-    .conversion-options {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        width: 100%;
-        flex-wrap: wrap; /* Allow wrapping for smaller screens */
-
-    }
+.button-group button:hover {
+    background-color: #495057;
+    border-color: #6c757d;
+    color: #fff;
+}
 
 
-    select, .primary-button {
-        padding: 10px 15px;
-        border: 1px solid #ced4da;
-        border-radius: 6px;
-        font-size: 16px;
-        cursor: pointer;
-        transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    }
-    .conversion-options select {
-        flex-grow:1;
-        margin-bottom: 10px; /* Add margin for spacing on smaller screens */
-    }
-    select:focus, .primary-button:focus {
-        border-color: #80bdff;
-        outline: 0;
-        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-    }
+.conversion-options {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+    flex-wrap: wrap; /* Allow wrapping for smaller screens */
 
-    /* Primary Button Style */
-    .primary-button {
-        background-color: #007bff;
-        color: white;
-        border: none;
-        font-weight: 500;
-        margin-bottom: 10px; /* Add margin for spacing on smaller screens */
+}
 
 
-    }
+select, .primary-button {
+    padding: 10px 15px;
+    border: 1px solid #495057; /* Darker border */
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    background-color: #343a40; /* Darker select background */
+    color: #e0e0e0; /* Light text color */
+}
+.conversion-options select {
+    flex-grow:1;
+    margin-bottom: 10px; /* Add margin for spacing on smaller screens */
+}
+select:focus, .primary-button:focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
 
-    .primary-button:hover {
-        background-color: #0056b3;
-    }
-
-    /* File Input Styling */
-    #file-input {
-        display: none;
-    }
-
-    .file-input-label {
-        background-color: #e9ecef;
-        color: #495057;
-        padding: 10px 15px;
-        border: 1px solid #ced4da;
-        border-radius: 6px;
-        cursor: pointer;
-        display: inline-block;
-        transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
-        margin-top:10px;
-    }
-
-    .file-input-label:hover {
-        background-color: #dee2e6;
-        border-color: #adb5bd;
-    }
-
-    .file-input-label span {
-        margin-right: 10px;
-    }
+/* Primary Button Style */
+.primary-button {
+    background-color: #007bff; /* Keep primary button color */
+    color: white;
+    border: none;
+    font-weight: 500;
+    margin-bottom: 10px; /* Add margin for spacing on smaller screens */
 
 
-    /* Tooltip Styles */
-    .tooltip {
-        position: relative;
-        display: inline-block;
-    }
+}
 
-    .tooltip[title]:hover::before {
-        content: attr(title);
-        position: absolute;
-        bottom: 120%;
-        left: 50%;
-        transform: translateX(-50%);
-        background-color: rgba(52, 58, 64, 0.9);
-        color: #fff;
-        padding: 6px 12px;
-        border-radius: 6px;
-        white-space: nowrap;
-        z-index: 1;
-        font-size: 0.85em;
-    }
+.primary-button:hover {
+    background-color: #0056b3;
+}
 
-    .tooltip[title]:hover::after {
-        content: '';
-        position: absolute;
-        bottom: 105%;
-        left: 50%;
-        margin-left: -6px;
-        border-width: 6px;
-        border-style: solid;
-        border-color: rgba(52, 58, 64, 0.9) transparent transparent transparent;
-    }
+/* File Input Styling */
+#file-input {
+    display: none;
+}
 
-    /* Checkbox styles */
-    .checkbox-container {
-        display: none; /* Initially hidden */
-        align-items: center;
-        margin-left: 15px;
-        margin-bottom: 10px;
-    }
+.file-input-label {
+    background-color: #343a40; /* Darker label background */
+    color: #e0e0e0;  /*Light text color*/
+    padding: 10px 15px;
+    border: 1px solid #495057; /* Darker border */
+    border-radius: 6px;
+    cursor: pointer;
+    display: inline-block;
+    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+    margin-top:10px;
+}
 
-    .checkbox-container-x2 {
-        display: none;
-        align-items: center;
-        margin-left: 15px;
-        margin-bottom: 10px;
-    }
+.file-input-label:hover {
+    background-color: #495057;
+    border-color: #6c757d;
+}
 
-    .checkbox-container-shwa { /* Corrected class name */
-        display: none;
-        align-items: center;
-        margin-left: 15px;
-        margin-bottom: 10px;
-    }
-     .checkbox-container-e-acute { /* Corrected class name */
-        display: none;
-        align-items: center;
-        margin-left: 15px;
-        margin-bottom: 10px;
-    }
+.file-input-label span {
+    margin-right: 10px;
+}
 
-    .checkbox-container input[type="checkbox"],
-    .checkbox-container-x2 input[type="checkbox"],
-    .checkbox-container-shwa input[type="checkbox"], /* Corrected selector */
-    .checkbox-container-e-acute input[type="checkbox"]
-     {
-        margin-right: 5px;
-    }
 
+/* Tooltip Styles */
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip[title]:hover::before {
+    content: attr(title);
+    position: absolute;
+    bottom: 120%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(255, 255, 255, 0.9); /* Light tooltip background */
+    color: #121212; /* Dark text */
+    padding: 6px 12px;
+    border-radius: 6px;
+    white-space: nowrap;
+    z-index: 1;
+    font-size: 0.85em;
+}
+
+.tooltip[title]:hover::after {
+    content: '';
+    position: absolute;
+    bottom: 105%;
+    left: 50%;
+    margin-left: -6px;
+    border-width: 6px;
+    border-style: solid;
+    border-color: rgba(255, 255, 255, 0.9) transparent transparent transparent; /* Light arrow */
+}
+
+/* Checkbox styles */
+.checkbox-container {
+    display: none; /* Initially hidden */
+    align-items: center;
+    margin-left: 15px;
+    margin-bottom: 10px;
+}
+
+.checkbox-container-x2 {
+    display: none;
+    align-items: center;
+    margin-left: 15px;
+    margin-bottom: 10px;
+}
+
+.checkbox-container-shwa {
+    display: none;
+    align-items: center;
+    margin-left: 15px;
+    margin-bottom: 10px;
+}
+ .checkbox-container-e-acute {
+    display: none;
+    align-items: center;
+    margin-left: 15px;
+    margin-bottom: 10px;
+}
+
+.checkbox-container input[type="checkbox"],
+.checkbox-container-x2 input[type="checkbox"],
+.checkbox-container-shwa input[type="checkbox"],
+.checkbox-container-e-acute input[type="checkbox"]
+ {
+    margin-right: 5px;
+     /* Style the checkboxes for dark theme -  */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 16px;
+    height: 16px;
+    border: 1px solid #6c757d;
+    border-radius: 4px;
+    background-color: #2a2a2a;
+    cursor: pointer;
+    outline: none;
+ }
+.checkbox-container input[type="checkbox"]:checked,
+.checkbox-container-x2 input[type="checkbox"]:checked,
+.checkbox-container-shwa input[type="checkbox"]:checked,
+.checkbox-container-e-acute input[type="checkbox"]:checked{
+    background-color: #007bff;
+    border-color: #007bff;
+}
+ .checkbox-container input[type="checkbox"]:checked::before,
+.checkbox-container-x2 input[type="checkbox"]:checked::before,
+.checkbox-container-shwa input[type="checkbox"]:checked::before,
+.checkbox-container-e-acute input[type="checkbox"]:checked::before{
+    content: '\2713';  /* Checkmark symbol */
+    display: block;
+    text-align: center;
+    line-height: 16px;
+    color: white;
+    font-size: 12px;
+}
     </style>
 </head>
 <body>
