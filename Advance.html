@@ -406,10 +406,8 @@
 'ʷ': 'ⵯ',
 'ᵒ': 'ⵯ',
 '°': 'ⵯ',
-'ǧǧ': 'ⵊⵊ',
-'čč': 'ⵛⵛ',
-'ǧ': 'ⵊⵊ',
-'č': 'ⵛⵛ',
+'ǧ': 'ⵊ',
+'č': 'ⵛ',
 'ž': 'ⵣⵣ',
 'ž': 'ⵣⵣ',
 'ř': 'ⵍ',
@@ -446,10 +444,8 @@
 'Y': 'ⵢ',
 'Z': 'ⵣ',
 'Ẓ': 'ⵥ',
-'ǦǦ': 'ⵊⵊ',
-'ČČ': 'ⵛⵛ',
-'Ǧ': 'ⵊⵊ',
-'Č': 'ⵛⵛ',
+'Ǧ': 'ⵊ',
+'Č': 'ⵛ',
 'Ž': 'ⵣⵣ',
 'Ž': 'ⵣⵣ',
 'Ř': 'ⵍ'
@@ -895,34 +891,57 @@
         };
 
         function removeChars(text, map, charsToRemove) {
-            let result = "";
-            let i = 0;
-            while (i < text.length) {
-                let foundMatch = false;
+    let result = "";
+    let i = 0;
+    while (i < text.length) {
+        let foundMatch = false;
 
-                // Check for digraphs/trigraphs FIRST
-                for (let keyLength = 4; keyLength > 0; keyLength--) {
-                    const potentialKey = text.substring(i, i + keyLength);
-                    if (map[potentialKey] && !charsToRemove.some(char => potentialKey.includes(char)) ) {
-                        result += potentialKey;
-                        i += keyLength;
-                        foundMatch = true;
-                        break;
-                    }
-                }
-
-                if (!foundMatch) {
-                    // Now simplified:  Just check if it's in charsToRemove
-                    if (charsToRemove.includes(text[i])) {
-                        i++; // Skip it
-                    } else {
-                        result += text[i]; // Keep it
-                        i++;
-                    }
-                }
+        // Check for digraphs/trigraphs FIRST
+        for (let keyLength = 4; keyLength > 0; keyLength--) {
+            const potentialKey = text.substring(i, i + keyLength);
+            if (map[potentialKey] && !charsToRemove.some(char => potentialKey.includes(char))) {
+                result += potentialKey;
+                i += keyLength;
+                foundMatch = true;
+                break;
             }
-            return result;
         }
+
+
+        if (!foundMatch) {
+            // Check if the current character should be removed
+            if (charsToRemove.includes(text[i])) {
+                // Check for repeated characters before and after
+                let j = i - 1;
+                let k = i + 1;
+                let keepChar = false;
+
+                // Look backward for repeating char
+                while (j >= 0 && text[j] === text[i]) {
+                  j--;
+                }
+                // look forward
+                while (k < text.length && text[k] === text[i]) {
+                  k++;
+                }
+
+                // If sequence before AND after (j and k) are same char, we want to keep it.
+                if (j >= 0 && k < text.length && text[j] === text[k]) {
+                   keepChar = true;
+                }
+                if (keepChar) {
+                    result += text[i]; //keep the character
+                }
+
+                i++; // Always advance, whether we keep it or not
+            } else {
+                result += text[i];
+                i++;
+            }
+        }
+    }
+    return result;
+}
 function convertText(text, map, removeVowelE, removeShwa, removeEAcute, x2Spacing) {
     let processedText = text;
 
