@@ -8,7 +8,7 @@ Access the advanced converter here: [https://abdelhaqueidali.github.io/Amazigh-S
 
 ## Basic Version
 
-For a simplified version with only Tifinagh to Latin and Latin to Tifinagh conversion, see the basic version: [https://abdelhaqueidali.github.io/Amazigh-Scripts-Converter/iindex.html](https://abdelhaqueidali.github.io/Amazigh-Scripts-Converter/iindex.html)
+For a simplified version with only Tifinagh to Latin and Latin to Tifinagh conversion, see the basic version: [https://abdelhaqueidali.github.io/Amazigh-Scripts-Converter/iindex.html](https://abdelhaqueidali.github.io/Amazigh-Scripts-Converter/index.html)
 
 ## Features
 
