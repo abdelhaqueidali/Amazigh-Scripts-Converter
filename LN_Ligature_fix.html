@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tifinagh ZWNJ Inserter</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        textarea, input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px; /* Make sure font supports Tifinagh! */
+            font-family: 'Noto Sans Tifinagh', sans-serif; /* Or another Tifinagh font */
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #output {
+            white-space: pre-wrap; /* Preserve whitespace and line breaks */
+            border: 1px solid #ccc;
+            padding: 10px;
+            min-height: 50px;
+            border-radius: 4px;
+            font-size: 16px;
+             font-family: 'Noto Sans Tifinagh', sans-serif; /* Use a Tifinagh font! */
+        }
+		 .hidden {
+			display: none;
+		 }
+		 #copyButton{
+			margin-top: 10px;
+			margin-bottom: 10px;
+		 }
+    </style>
+	 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tifinagh&display=swap" rel="stylesheet">
+
+</head>
+<body>
+
+    <h1>Tifinagh ZWNJ Inserter</h1>
+
+    <label for="inputText">Input Text (Tifinagh):</label>
+    <textarea id="inputText" placeholder="Enter your Tifinagh text here..."></textarea>
+
+    <button onclick="processText()">Process Text</button>
+	 <button id="copyButton" class="hidden" onclick="copyToClipboard()">Copy to Clipboard</button>
+
+
+    <label for="output">Output:</label>
+    <div id="output"></div>
+
+
+
+    <script>
+        function processText() {
+            const inputText = document.getElementById('inputText').value;
+            const zwnj = '\u200C'; // Zero Width Non-Joiner
+            const combinations = ["ⵍⵍ", "ⵍⵏ", "ⵏⵍ", "ⵏⵏ"];
+
+            let outputText = inputText;
+
+            for (const combo of combinations) {
+                const regex = new RegExp(combo.split('').join(''), 'g'); // escape special characters
+                outputText = outputText.replace(regex, combo.split('').join(zwnj));
+            }
+
+            document.getElementById('output').textContent = outputText;
+				document.getElementById('copyButton').classList.remove('hidden');
+        }
+		  function copyToClipboard() {
+			  const output = document.getElementById('output');
+			  const textToCopy = output.textContent;
+
+
+			  // Use the Clipboard API for modern browsers
+			 if (navigator.clipboard && navigator.clipboard.writeText) {
+				 navigator.clipboard.writeText(textToCopy)
+					 .then(() => {
+						 alert('Text copied to clipboard!');
+					 })
+					 .catch(err => {
+						 console.error('Failed to copy text: ', err);
+						 fallbackCopyTextToClipboard(textToCopy); // Fallback for older browsers
+					 });
+			 } else {
+				 fallbackCopyTextToClipboard(textToCopy); // Fallback if Clipboard API is unavailable
+			 }
+
+				function fallbackCopyTextToClipboard(text) {
+					 // Create a temporary textarea element
+					 const tempTextArea = document.createElement('textarea');
+					 tempTextArea.value = text;
+
+					 // Make the textarea out of the viewport and read-only
+					 tempTextArea.style.position = 'fixed';  // Prevent scrolling to the bottom of the page in MS Edge.
+					 tempTextArea.style.top = 0;
+					 tempTextArea.style.left = 0;
+					 tempTextArea.style.opacity = 0;       // Make it invisible
+					 document.body.appendChild(tempTextArea);
+					 tempTextArea.focus();
+
+					//select and copy
+					 tempTextArea.select();
+					  try {
+							const successful = document.execCommand('copy');
+							const msg = successful ? 'successful' : 'unsuccessful';
+							alert('Copying text command was ' + msg);
+					  } catch (err) {
+							console.error('Fallback: Oops, unable to copy', err);
+							alert("Could not copy text.  Please select the text manually and copy.");
+					  } finally {
+							document.body.removeChild(tempTextArea);  // Remove the temporary textarea
+					  }
+				}
+			}
+
+    </script>
+
+</body>
+</html>
