@@ -10,7 +10,6 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             min-height: 100vh;
             margin: 0;
             background-color: #f0f0f0;
@@ -41,9 +40,58 @@
             border-color: #555;
         }
         .button-container {
-            margin-top: 10px;
+            margin: 10px 0;
             display: flex;
             gap: 10px;
+        }
+        .keyboard-container {
+            margin-top: 20px;
+            width: 80%;
+            max-width: 800px;
+        }
+        .keyboard-prompt {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .layout-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        .keyboard-title {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .keyboard {
+            background-color: #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .row {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 5px;
+        }
+        .key {
+            background-color: #fff;
+            border: 1px solid #999;
+            border-radius: 4px;
+            width: 40px;
+            height: 40px;
+            margin: 0 3px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            line-height: 1.2;
+            text-align: center;
         }
         button {
             padding: 10px 20px;
@@ -58,6 +106,9 @@
         button:hover {
             background-color: #555;
         }
+        button.active {
+            background-color: #555;
+        }
         @media (max-width: 600px) {
             #tifinaghInput {
                 width: 90%;
@@ -67,6 +118,21 @@
             button {
                 padding: 8px 15px;
                 font-size: 14px;
+            }
+            .keyboard-container {
+                width: 90%;
+            }
+            .key {
+                width: 30px;
+                height: 30px;
+                font-size: 10px;
+                margin: 0 2px;
+            }
+            .key .tifinagh {
+                font-size: 8px;
+            }
+            .keyboard-prompt, .keyboard-title {
+                font-size: 16px;
             }
         }
     </style>
@@ -78,6 +144,20 @@
         <button id="copyButton">Copy</button>
         <button id="exportButton">Export as TXT</button>
         <button id="clearButton">Clear</button>
+    </div>
+    <div class="keyboard-container">
+        <div class="keyboard-prompt">What language/layout are you using?</div>
+        <div class="layout-buttons">
+            <button id="azertyButton" class="active">Français (AZERTY)</button>
+            <button id="qwertyButton">English (QWERTY)</button>
+            <button id="qwertzButton">Deutsch (QWERTZ)</button>
+        </div>
+        <div id="keyboardDisplay">
+            <div class="keyboard-title">Main Layout (Lowercase)</div>
+            <div class="keyboard" id="mainKeyboard"></div>
+            <div class="keyboard-title">Shift Layout (Uppercase)</div>
+            <div class="keyboard" id="shiftKeyboard"></div>
+        </div>
     </div>
 
     <script>
@@ -116,46 +196,135 @@
         const copyButton = document.getElementById('copyButton');
         const exportButton = document.getElementById('exportButton');
         const clearButton = document.getElementById('clearButton');
+        const azertyButton = document.getElementById('azertyButton');
+        const qwertyButton = document.getElementById('qwertyButton');
+        const qwertzButton = document.getElementById('qwertzButton');
+        const mainKeyboard = document.getElementById('mainKeyboard');
+        const shiftKeyboard = document.getElementById('shiftKeyboard');
         let currentValue = '';
+
+        // Keyboard layouts
+        const layouts = {
+            azerty: {
+                main: [
+                    ['a', 'z', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
+                    ['q', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm'],
+                    ['w', 'x', 'c', 'v', 'b', 'n']
+                ],
+                shift: [
+                    ['A', 'Z', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
+                    ['Q', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M'],
+                    ['W', 'X', 'C', 'V', 'B', 'N']
+                ]
+            },
+            qwerty: {
+                main: [
+                    ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
+                    ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
+                    ['z', 'x', 'c', 'v', 'b', 'n', 'm']
+                ],
+                shift: [
+                    ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
+                    ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
+                    ['Z', 'X', 'C', 'V', 'B', 'N', 'M']
+                ]
+            },
+            qwertz: {
+                main: [
+                    ['q', 'w', 'e', 'r', 't', 'z', 'u', 'i', 'o', 'p'],
+                    ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
+                    ['y', 'x', 'c', 'v', 'b', 'n', 'm']
+                ],
+                shift: [
+                    ['Q', 'W', 'E', 'R', 'T', 'Z', 'U', 'I', 'O', 'P'],
+                    ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
+                    ['Y', 'X', 'C', 'V', 'B', 'N', 'M']
+                ]
+            }
+        };
+
+        // Function to clear keyboard
+        function clearKeyboard() {
+            mainKeyboard.innerHTML = '';
+            shiftKeyboard.innerHTML = '';
+        }
+
+        // Function to create keyboard HTML
+        function createKeyboard(layout) {
+            clearKeyboard();
+            layout.main.forEach(rowKeys => {
+                const row = document.createElement('div');
+                row.className = 'row';
+                rowKeys.forEach(key => {
+                    const keyDiv = document.createElement('div');
+                    keyDiv.className = 'key';
+                    keyDiv.innerHTML = `<span class="latin">${key}</span><span class="tifinagh">${tifinaghMap[key] || key}</span>`;
+                    row.appendChild(keyDiv);
+                });
+                mainKeyboard.appendChild(row);
+            });
+            layout.shift.forEach(rowKeys => {
+                const row = document.createElement('div');
+                row.className = 'row';
+                rowKeys.forEach(key => {
+                    const keyDiv = document.createElement('div');
+                    keyDiv.className = 'key';
+                    keyDiv.innerHTML = `<span class="latin">${key}</span><span class="tifinagh">${tifinaghMap[key] || key}</span>`;
+                    row.appendChild(keyDiv);
+                });
+                shiftKeyboard.appendChild(row);
+            });
+        }
+
+        // Initialize with AZERTY
+        createKeyboard(layouts.azerty);
+
+        // Button event listeners
+        function setActiveButton(activeButton) {
+            [azertyButton, qwertyButton, qwertzButton].forEach(btn => btn.classList.remove('active'));
+            activeButton.classList.add('active');
+        }
+
+        azertyButton.addEventListener('click', () => {
+            createKeyboard(layouts.azerty);
+            setActiveButton(azertyButton);
+        });
+
+        qwertyButton.addEventListener('click', () => {
+            createKeyboard(layouts.qwerty);
+            setActiveButton(qwertyButton);
+        });
+
+        qwertzButton.addEventListener('click', () => {
+            createKeyboard(layouts.qwertz);
+            setActiveButton(qwertzButton);
+        });
 
         // Handle keydown to capture and convert input
         tifinaghInput.addEventListener('keydown', (event) => {
-            // Allow backspace to remove characters
             if (event.key === 'Backspace') {
                 currentValue = currentValue.slice(0, -1);
                 tifinaghInput.value = currentValue;
                 event.preventDefault();
                 return;
             }
-
-            // Allow Enter key for new lines
             if (event.key === 'Enter') {
                 currentValue += '\n';
                 tifinaghInput.value = currentValue;
                 event.preventDefault();
                 return;
             }
-
-            // Allow other control keys (e.g., arrow keys, Ctrl+C)
             if (event.ctrlKey || event.metaKey || event.key.length > 1) {
                 return;
             }
-
-            // Prevent default to avoid Latin characters appearing
             event.preventDefault();
-
-            // Get the typed character
             const char = event.key;
-
-            // Map to Tifinagh or keep unmapped characters
             const tifinaghChar = tifinaghMap[char] || char;
-
-            // Update the current value and display
             currentValue += tifinaghChar;
             tifinaghInput.value = currentValue;
         });
 
-        // Prevent paste to maintain control over input
+        // Handle paste
         tifinaghInput.addEventListener('paste', (event) => {
             event.preventDefault();
             const pastedText = (event.clipboardData || window.clipboardData).getData('text');
@@ -169,7 +338,7 @@
             currentValue = tifinaghInput.value;
         });
 
-        // Copy button functionality
+        // Copy button
         copyButton.addEventListener('click', () => {
             if (currentValue) {
                 navigator.clipboard.writeText(currentValue)
@@ -180,7 +349,7 @@
             }
         });
 
-        // Export as TXT functionality
+        // Export as TXT
         exportButton.addEventListener('click', () => {
             if (currentValue) {
                 const blob = new Blob([currentValue], { type: 'text/plain' });
@@ -195,7 +364,7 @@
             }
         });
 
-        // Clear button functionality
+        // Clear button
         clearButton.addEventListener('click', () => {
             currentValue = '';
             tifinaghInput.value = '';
