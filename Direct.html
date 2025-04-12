@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tifinagh Direct Input</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        #tifinaghInput {
+            width: 80%;
+            max-width: 800px;
+            height: 200px;
+            padding: 15px;
+            font-size: 24px;
+            border: 2px solid #333;
+            border-radius: 5px;
+            background-color: #fff;
+            resize: vertical;
+            box-sizing: border-box;
+            white-space: pre-wrap;
+            overflow-wrap: break-word;
+            line-height: 1.5;
+        }
+        #tifinaghInput:focus {
+            outline: none;
+            border-color: #555;
+        }
+        .button-container {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #333;
+            color: #fff;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: #555;
+        }
+        @media (max-width: 600px) {
+            #tifinaghInput {
+                width: 90%;
+                height: 150px;
+                font-size: 20px;
+            }
+            button {
+                padding: 8px 15px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Tifinagh Direct Input</h1>
+    <textarea id="tifinaghInput" placeholder="Type to see Tifinagh..." autofocus></textarea>
+    <div class="button-container">
+        <button id="copyButton">Copy</button>
+        <button id="exportButton">Export as TXT</button>
+        <button id="clearButton">Clear</button>
+    </div>
+
+    <script>
+        // Tifinagh mapping
+        const tifinaghMap = {
+            'a': 'ⴰ', 'A': 'ⴰ',
+            'b': 'ⴱ', 'B': 'ⴱ',
+            'g': 'ⴳ', 'G': 'ⴳⵯ',
+            'd': 'ⴷ', 'D': 'ⴹ',
+            'e': 'ⴻ', 'E': 'ⴻ',
+            'f': 'ⴼ', 'F': 'ⴼ',
+            'k': 'ⴽ', 'K': 'ⴽⵯ',
+            'h': 'ⵀ', 'H': 'ⵀ',
+            'p': 'ⵃ', 'P': 'ⵃ',
+            'o': 'ⵄ', 'O': 'ⵄ',
+            'x': 'ⵅ', 'X': 'ⵅ',
+            'q': 'ⵇ', 'Q': 'ⵇ',
+            'i': 'ⵉ', 'I': 'ⵉ',
+            'j': 'ⵊ', 'J': 'ⵊ',
+            'l': 'ⵍ', 'L': 'ⵍ',
+            'm': 'ⵎ', 'M': 'ⵎ',
+            'n': 'ⵏ', 'N': 'ⵏ',
+            'u': 'ⵓ', 'U': 'ⵓ',
+            'r': 'ⵔ', 'R': 'ⵕ',
+            'v': 'ⵖ', 'V': 'ⵖ',
+            's': 'ⵙ', 'S': 'ⵚ',
+            'c': 'ⵛ', 'C': 'ⵛ',
+            't': 'ⵜ', 'T': 'ⵟ',
+            'w': 'ⵡ', 'W': 'ⵡ',
+            'y': 'ⵢ', 'Y': 'ⵢ',
+            'z': 'ⵣ', 'Z': 'ⵥ'
+        };
+
+        // Get elements
+        const tifinaghInput = document.getElementById('tifinaghInput');
+        const copyButton = document.getElementById('copyButton');
+        const exportButton = document.getElementById('exportButton');
+        const clearButton = document.getElementById('clearButton');
+        let currentValue = '';
+
+        // Handle keydown to capture and convert input
+        tifinaghInput.addEventListener('keydown', (event) => {
+            // Allow backspace to remove characters
+            if (event.key === 'Backspace') {
+                currentValue = currentValue.slice(0, -1);
+                tifinaghInput.value = currentValue;
+                event.preventDefault();
+                return;
+            }
+
+            // Allow Enter key for new lines
+            if (event.key === 'Enter') {
+                currentValue += '\n';
+                tifinaghInput.value = currentValue;
+                event.preventDefault();
+                return;
+            }
+
+            // Allow other control keys (e.g., arrow keys, Ctrl+C)
+            if (event.ctrlKey || event.metaKey || event.key.length > 1) {
+                return;
+            }
+
+            // Prevent default to avoid Latin characters appearing
+            event.preventDefault();
+
+            // Get the typed character
+            const char = event.key;
+
+            // Map to Tifinagh or keep unmapped characters
+            const tifinaghChar = tifinaghMap[char] || char;
+
+            // Update the current value and display
+            currentValue += tifinaghChar;
+            tifinaghInput.value = currentValue;
+        });
+
+        // Prevent paste to maintain control over input
+        tifinaghInput.addEventListener('paste', (event) => {
+            event.preventDefault();
+            const pastedText = (event.clipboardData || window.clipboardData).getData('text');
+            const convertedText = pastedText.split('').map(char => tifinaghMap[char] || char).join('');
+            currentValue += convertedText;
+            tifinaghInput.value = currentValue;
+        });
+
+        // Sync currentValue with manual edits
+        tifinaghInput.addEventListener('input', () => {
+            currentValue = tifinaghInput.value;
+        });
+
+        // Copy button functionality
+        copyButton.addEventListener('click', () => {
+            if (currentValue) {
+                navigator.clipboard.writeText(currentValue)
+                    .then(() => alert('Text copied to clipboard!'))
+                    .catch(() => alert('Failed to copy text.'));
+            } else {
+                alert('Nothing to copy!');
+            }
+        });
+
+        // Export as TXT functionality
+        exportButton.addEventListener('click', () => {
+            if (currentValue) {
+                const blob = new Blob([currentValue], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'tifinagh_text.txt';
+                a.click();
+                URL.revokeObjectURL(url);
+            } else {
+                alert('Nothing to export!');
+            }
+        });
+
+        // Clear button functionality
+        clearButton.addEventListener('click', () => {
+            currentValue = '';
+            tifinaghInput.value = '';
+            tifinaghInput.focus();
+        });
+    </script>
+</body>
+</html>
