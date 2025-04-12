@@ -43,6 +43,7 @@
             margin: 10px 0;
             display: flex;
             gap: 10px;
+            align-items: center;
         }
         .keyboard-container {
             margin-top: 20px;
@@ -93,6 +94,13 @@
             line-height: 1.2;
             text-align: center;
         }
+        .key .tifinagh {
+            color: #000;
+        }
+        .key .latin {
+            color: #555;
+            font-size: 10px;
+        }
         button {
             padding: 10px 20px;
             font-size: 16px;
@@ -108,6 +116,22 @@
         }
         button.active {
             background-color: #555;
+        }
+        #typeLatinButton {
+            background-color: #333;
+        }
+        #typeLatinButton.on {
+            background-color: #2ecc71;
+        }
+        #typeLatinButton.on:hover {
+            background-color: #27ae60;
+        }
+        .explanation {
+            font-size: 16px;
+            color: #333;
+            text-align: center;
+            margin-top: 10px;
+            max-width: 800px;
         }
         @media (max-width: 600px) {
             #tifinaghInput {
@@ -128,11 +152,14 @@
                 font-size: 10px;
                 margin: 0 2px;
             }
-            .key .tifinagh {
+            .key .latin {
                 font-size: 8px;
             }
             .keyboard-prompt, .keyboard-title {
                 font-size: 16px;
+            }
+            .explanation {
+                font-size: 14px;
             }
         }
     </style>
@@ -144,6 +171,7 @@
         <button id="copyButton">Copy</button>
         <button id="exportButton">Export as TXT</button>
         <button id="clearButton">Clear</button>
+        <button id="typeLatinButton">Type Latin: Off</button>
     </div>
     <div class="keyboard-container">
         <div class="keyboard-prompt">What language/layout are you using?</div>
@@ -158,6 +186,9 @@
             <div class="keyboard-title">Shift Layout (Uppercase)</div>
             <div class="keyboard" id="shiftKeyboard"></div>
         </div>
+        <p class="explanation">
+            This tool maps Latin keyboard layouts to Tifinagh characters, with the AZERTY layout as the standard reference. The Latin letters follow the Latin Amazigh alphabet used for writing Amazigh languages, though 'o', 'p', and 'v' are included here despite not being typical in that standard. Emphatic consonants, such as 'ⴹ' (D), 'ⵕ' (R), 'ⵚ' (S), and 'ⵟ' (T), are mapped to the Shift versions of their non-emphatic forms: 'ⴷ' (d), 'ⵔ' (r), 'ⵙ' (s), and 'ⵜ' (t).
+        </p>
     </div>
 
     <script>
@@ -196,12 +227,14 @@
         const copyButton = document.getElementById('copyButton');
         const exportButton = document.getElementById('exportButton');
         const clearButton = document.getElementById('clearButton');
+        const typeLatinButton = document.getElementById('typeLatinButton');
         const azertyButton = document.getElementById('azertyButton');
         const qwertyButton = document.getElementById('qwertyButton');
         const qwertzButton = document.getElementById('qwertzButton');
         const mainKeyboard = document.getElementById('mainKeyboard');
         const shiftKeyboard = document.getElementById('shiftKeyboard');
         let currentValue = '';
+        let isTypeLatin = false;
 
         // Keyboard layouts
         const layouts = {
@@ -258,7 +291,7 @@
                 rowKeys.forEach(key => {
                     const keyDiv = document.createElement('div');
                     keyDiv.className = 'key';
-                    keyDiv.innerHTML = `<span class="latin">${key}</span><span class="tifinagh">${tifinaghMap[key] || key}</span>`;
+                    keyDiv.innerHTML = `<span class="tifinagh">${tifinaghMap[key] || key}</span><span class="latin">${key}</span>`;
                     row.appendChild(keyDiv);
                 });
                 mainKeyboard.appendChild(row);
@@ -269,7 +302,7 @@
                 rowKeys.forEach(key => {
                     const keyDiv = document.createElement('div');
                     keyDiv.className = 'key';
-                    keyDiv.innerHTML = `<span class="latin">${key}</span><span class="tifinagh">${tifinaghMap[key] || key}</span>`;
+                    keyDiv.innerHTML = `<span class="tifinagh">${tifinaghMap[key] || key}</span><span class="latin">${key}</span>`;
                     row.appendChild(keyDiv);
                 });
                 shiftKeyboard.appendChild(row);
@@ -279,7 +312,7 @@
         // Initialize with AZERTY
         createKeyboard(layouts.azerty);
 
-        // Button event listeners
+        // Button event listeners for layout switching
         function setActiveButton(activeButton) {
             [azertyButton, qwertyButton, qwertzButton].forEach(btn => btn.classList.remove('active'));
             activeButton.classList.add('active');
@@ -298,6 +331,13 @@
         qwertzButton.addEventListener('click', () => {
             createKeyboard(layouts.qwertz);
             setActiveButton(qwertzButton);
+        });
+
+        // Type Latin button toggle
+        typeLatinButton.addEventListener('click', () => {
+            isTypeLatin = !isTypeLatin;
+            typeLatinButton.textContent = `Type Latin: ${isTypeLatin ? 'On' : 'Off'}`;
+            typeLatinButton.classList.toggle('on', isTypeLatin);
         });
 
         // Handle keydown to capture and convert input
@@ -319,8 +359,8 @@
             }
             event.preventDefault();
             const char = event.key;
-            const tifinaghChar = tifinaghMap[char] || char;
-            currentValue += tifinaghChar;
+            const outputChar = isTypeLatin ? char : (tifinaghMap[char] || char);
+            currentValue += outputChar;
             tifinaghInput.value = currentValue;
         });
 
@@ -328,7 +368,9 @@
         tifinaghInput.addEventListener('paste', (event) => {
             event.preventDefault();
             const pastedText = (event.clipboardData || window.clipboardData).getData('text');
-            const convertedText = pastedText.split('').map(char => tifinaghMap[char] || char).join('');
+            const convertedText = isTypeLatin
+                ? pastedText
+                : pastedText.split('').map(char => tifinaghMap[char] || char).join('');
             currentValue += convertedText;
             tifinaghInput.value = currentValue;
         });
