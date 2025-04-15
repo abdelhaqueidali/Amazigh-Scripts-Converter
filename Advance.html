@@ -1065,8 +1065,8 @@ function convertText(text, map, removeVowelE, removeShwa, removeEAcute, x2Spacin
     let result = '';
     let i = 0;
     let shouldCapitalize = true; // Start of text should be capitalized
-
-    const sentenceEnders = ['.', '!', '?'];
+// Punctuation which after letters are capitalized!, you may add as many.
+    const sentenceEnders = ['.', '!', '?', '[', ']', '*', '('];
 
     while (i < processedText.length) {
 
