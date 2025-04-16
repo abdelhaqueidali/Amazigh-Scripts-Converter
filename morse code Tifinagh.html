@@ -1,0 +1,311 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row =>
+                    row.some(cell => cell !== '' && cell !== null && cell !== undefined)
+                );
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amazigh & Latin ↔ Morse Converter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .morse-btn {
+            transition: background-color 0.1s;
+        }
+        .morse-btn:active {
+            background-color: #e5e7eb;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+        <h1 class="text-2xl font-bold mb-4 text-center">Amazigh & Latin ↔ Morse Converter</h1>
+        
+        <!-- Input Mode Selection -->
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Input Mode</label>
+            <div class="flex gap-2">
+                <button id="amazighMode" class="flex-1 bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600">Amazigh</button>
+                <button id="latinMode" class="flex-1 bg-gray-200 p-2 rounded-md hover:bg-gray-300">Latin</button>
+            </div>
+        </div>
+
+        <!-- Amazigh/Latin to Morse -->
+        <div class="mb-6">
+            <label for="textInput" class="block text-sm font-medium text-gray-700">Amazigh/Latin Input</label>
+            <input id="textInput" type="text" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Enter Amazigh or Latin text">
+            <p id="morseOutput" class="mt-2 text-gray-700 break-all"></p>
+        </div>
+        
+        <!-- Morse to Amazigh/Latin -->
+        <div class="mb-6">
+            <label for="morseInput" class="block text-sm font-medium text-gray-700">Morse Input</label>
+            <input id="morseInput" type="text" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Enter Morse code (e.g., ·−/··−··///−·−)">
+            <div class="mt-2 flex gap-2">
+                <button onclick="addMorseSymbol('·')" class="morse-btn flex-1 bg-gray-200 p-2 rounded-md text-center">·</button>
+                <button onclick="addMorseSymbol('−')" class="morse-btn flex-1 bg-gray-200 p-2 rounded-md text-center">−</button>
+                <button onclick="addMorseSymbol('/')" class="morse-btn flex-1 bg-gray-200 p-2 rounded-md text-center">/</button>
+                <button onclick="addMorseSymbol('///')" class="morse-btn flex-1 bg-gray-200 p-2 rounded-md text-center">///</button>
+                <button onclick="clearMorseInput()" class="morse-btn flex-1 bg-gray-200 p-2 rounded-md text-center">Clear</button>
+            </div>
+            <p id="textOutput" class="mt-2 text-gray-700"></p>
+        </div>
+
+        <!-- Explanation -->
+        <div class="mb-6">
+            <h2 class="text-xl font-semibold mb-2">How It Works</h2>
+            <p class="text-gray-700">
+                This tool converts text between Amazigh (Tifinagh), Latin, and Morse code in real-time as you type. Select the input mode (Amazigh or Latin) using the buttons above. Enter text in the first input to see the Morse code output, or enter Morse code (using dots ·, dashes −, / for letter separation, and /// for word separation) in the second input to see the text output. Use the buttons below the Morse input to add Morse symbols or clear the input. Each Amazigh and Latin character maps to the same Morse code sequence, as shown in the mapping table below.
+            </p>
+        </div>
+
+        <!-- Mapping Table -->
+        <div>
+            <h2 class="text-xl font-semibold mb-2">Amazigh & Latin to Morse Mapping</h2>
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="p-2 border">Amazigh</th>
+                        <th class="p-2 border">Latin</th>
+                        <th class="p-2 border">Morse</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td class="p-2 border">ⴰ</td><td class="p-2 border">A</td><td class="p-2 border">·−</td></tr>
+                    <tr><td class="p-2 border">ⴱ</td><td class="p-2 border">B</td><td class="p-2 border">−···</td></tr>
+                    <tr><td class="p-2 border">ⵛ</td><td class="p-2 border">C</td><td class="p-2 border">−·−·</td></tr>
+                    <tr><td class="p-2 border">ⴷ</td><td class="p-2 border">D</td><td class="p-2 border">−··</td></tr>
+                    <tr><td class="p-2 border">ⴻ</td><td class="p-2 border">E</td><td class="p-2 border">·</td></tr>
+                    <tr><td class="p-2 border">ⴼ</td><td class="p-2 border">F</td><td class="p-2 border">··−·</td></tr>
+                    <tr><td class="p-2 border">ⴳ</td><td class="p-2 border">G</td><td class="p-2 border">−−·</td></tr>
+                    <tr><td class="p-2 border">ⵀ</td><td class="p-2 border">H</td><td class="p-2 border">····</td></tr>
+                    <tr><td class="p-2 border">ⵉ</td><td class="p-2 border">I</td><td class="p-2 border">··</td></tr>
+                    <tr><td class="p-2 border">ⵊ</td><td class="p-2 border">J</td><td class="p-2 border">·−−−</td></tr>
+                    <tr><td class="p-2 border">ⴽ</td><td class="p-2 border">K</td><td class="p-2 border">−·−</td></tr>
+                    <tr><td class="p-2 border">ⵍ</td><td class="p-2 border">L</td><td class="p-2 border">·−··</td></tr>
+                    <tr><td class="p-2 border">ⵎ</td><td class="p-2 border">M</td><td class="p-2 border">−−</td></tr>
+                    <tr><td class="p-2 border">ⵏ</td><td class="p-2 border">N</td><td class="p-2 border">−·</td></tr>
+                    <tr><td class="p-2 border">ⵄ</td><td class="p-2 border">O</td><td class="p-2 border">−−−</td></tr>
+                    <tr><td class="p-2 border">ⵃ</td><td class="p-2 border">P</td><td class="p-2 border">·−−·</td></tr>
+                    <tr><td class="p-2 border">ⵇ</td><td class="p-2 border">Q</td><td class="p-2 border">−−·−</td></tr>
+                    <tr><td class="p-2 border">ⵔ</td><td class="p-2 border">R</td><td class="p-2 border">·−·</td></tr>
+                    <tr><td class="p-2 border">ⵙ</td><td class="p-2 border">S</td><td class="p-2 border">···</td></tr>
+                    <tr><td class="p-2 border">ⵜ</td><td class="p-2 border">T</td><td class="p-2 border">−</td></tr>
+                    <tr><td class="p-2 border">ⵓ</td><td class="p-2 border">U</td><td class="p-2 border">··−</td></tr>
+                    <tr><td class="p-2 border">ⵖ</td><td class="p-2 border">V</td><td class="p-2 border">···−</td></tr>
+                    <tr><td class="p-2 border">ⵡ</td><td class="p-2 border">W</td><td class="p-2 border">·−−</td></tr>
+                    <tr><td class="p-2 border">ⵅ</td><td class="p-2 border">X</td><td class="p-2 border">−··−</td></tr>
+                    <tr><td class="p-2 border">ⵢ</td><td class="p-2 border">Y</td><td class="p-2 border">−·−−</td></tr>
+                    <tr><td class="p-2 border">ⵣ</td><td class="p-2 border">Z</td><td class="p-2 border">−−··</td></tr>
+                    <tr><td class="p-2 border">ⴹ</td><td class="p-2 border">Ä</td><td class="p-2 border">·−·−</td></tr>
+                    <tr><td class="p-2 border">ⴳⵯ</td><td class="p-2 border">À</td><td class="p-2 border">·−−·−</td></tr>
+                    <tr><td class="p-2 border">ⴽⵯ</td><td class="p-2 border">Ç</td><td class="p-2 border">−·−··</td></tr>
+                    <tr><td class="p-2 border">ⵕ</td><td class="p-2 border">CH</td><td class="p-2 border">−−−−</td></tr>
+                    <tr><td class="p-2 border">ⵚ</td><td class="p-2 border">Ð</td><td class="p-2 border">··−−·</td></tr>
+                    <tr><td class="p-2 border">ⵟ</td><td class="p-2 border">È</td><td class="p-2 border">·−··−</td></tr>
+                    <tr><td class="p-2 border">ⵥ</td><td class="p-2 border">É</td><td class="p-2 border">··−··</td></tr>
+                    <tr><td class="p-2 border"></td><td class="p-2 border">Ñ</td><td class="p-2 border">−−·−−</td></tr>
+                    <tr><td class="p-2 border"></td><td class="p-2 border">Ö</td><td class="p-2 border">−−−·</td></tr>
+                    <tr><td class="p-2 border"></td><td class="p-2 border">Š</td><td class="p-2 border">···−·</td></tr>
+                    <tr><td class="p-2 border"></td><td class="p-2 border">Þ</td><td class="p-2 border">·−−··</td></tr>
+                    <tr><td class="p-2 border"></td><td class="p-2 border">Ü</td><td class="p-2 border">··−−</td></tr>
+                    <tr><td class="p-2 border"></td><td class="p-2 border">.</td><td class="p-2 border">·−·−·−</td></tr>
+                    <tr><td class="p-2 border"></td><td class="p-2 border">,</td><td class="p-2 border">−−··−−</td></tr>
+                    <tr><td class="p-2 border"></td><td class="p-2 border">?</td><td class="p-2 border">··−−··</td></tr>
+                    <tr><td class="p-2 border"></td><td class="p-2 border">!</td><td class="p-2 border">−·−·−−</td></tr>
+                    <tr><td class="p-2 border"></td><td class="p-2 border">/</td><td class="p-2 border">−··−·</td></tr>
+                    <tr><td class="p-2 border"></td><td class="p-2 border">(</td><td class="p-2 border">−·−−·</td></tr>
+                    <tr><td class="p-2 border"></td><td class="p-2 border">)</td><td class="p-2 border">−·−−·−</td></tr>
+                    <tr><td class="p-2 border"></td><td class="p-2 border">&</td><td class="p-2 border">·−···</td></tr>
+                    <tr><td class="p-2 border"></td><td class="p-2 border">:</td><td class="p-2 border">−−−···</td></tr>
+                    <tr><td class="p-2 border"></td><td class="p-2 border">;</td><td class="p-2 border">−·−·−·</td></tr>
+                    <tr><td class="p-2 border"></td><td class="p-2 border">=</td><td class="p-2 border">−···−</td></tr>
+                    <tr><td class="p-2 border"></td><td class="p-2 border">+</td><td class="p-2 border">·−·−·</td></tr>
+                    <tr><td class="p-2 border"></td><td class="p-2 border">-</td><td class="p-2 border">−····−</td></tr>
+                    <tr><td class="p-2 border"></td><td class="p-2 border">_</td><td class="p-2 border">··−−·−</td></tr>
+                    <tr><td class="p-2 border"></td><td class="p-2 border">"</td><td class="p-2 border">·−··−·</td></tr>
+                    <tr><td class="p-2 border"></td><td class="p-2 border">$</td><td class="p-2 border">···−··−</td></tr>
+                    <tr><td class="p-2 border"></td><td class="p-2 border">@</td><td class="p-2 border">·−−·−·</td></tr>
+                    <tr><td class="p-2 border"></td><td class="p-2 border">1</td><td class="p-2 border">·−−−−</td></tr>
+                    <tr><td class="p-2 border"></td><td class="p-2 border">2</td><td class="p-2 border">··−−−</td></tr>
+                    <tr><td class="p-2 border"></td><td class="p-2 border">3</td><td class="p-2 border">···−−</td></tr>
+                    <tr><td class="p-2 border"></td><td class="p-2 border">4</td><td class="p-2 border">····−</td></tr>
+                    <tr><td class="p-2 border"></td><td class="p-2 border">5</td><td class="p-2 border">·····</td></tr>
+                    <tr><td class="p-2 border"></td><td class="p-2 border">6</td><td class="p-2 border">−····</td></tr>
+                    <tr><td class="p-2 border"></td><td class="p-2 border">7</td><td class="p-2 border">−−···</td></tr>
+                    <tr><td class="p-2 border"></td><td class="p-2 border">8</td><td class="p-2 border">−−−··</td></tr>
+                    <tr><td class="p-2 border"></td><td class="p-2 border">9</td><td class="p-2 border">−−−−·</td></tr>
+                    <tr><td class="p-2 border"></td><td class="p-2 border">0</td><td class="p-2 border">−−−−−</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const morseMapping = {
+            'ⴰ': '·−', 'A': '·−',
+            'ⴱ': '−···', 'B': '−···',
+            'ⵛ': '−·−·', 'C': '−·−·',
+            'ⴷ': '−··', 'D': '−··',
+            'ⴻ': '·', 'E': '·',
+            'ⴼ': '··−·', 'F': '··−·',
+            'ⴳ': '−−·', 'G': '−−·',
+            'ⵀ': '····', 'H': '····',
+            'ⵉ': '··', 'I': '··',
+            'ⵊ': '·−−−', 'J': '·−−−',
+            'ⴽ': '−·−', 'K': '−·−',
+            'ⵍ': '·−··', 'L': '·−··',
+            'ⵎ': '−−', 'M': '−−',
+            'ⵏ': '−·', 'N': '−·',
+            'ⵄ': '−−−', 'O': '−−−',
+            'ⵃ': '·−−·', 'P': '·−−·',
+            'ⵇ': '−−·−', 'Q': '−−·−',
+            'ⵔ': '·−·', 'R': '·−·',
+            'ⵙ': '···', 'S': '···',
+            'ⵜ': '−', 'T': '−',
+            'ⵓ': '··−', 'U': '··−',
+            'ⵖ': '···−', 'V': '···−',
+            'ⵡ': '·−−', 'W': '·−−',
+            'ⵅ': '−··−', 'X': '−··−',
+            'ⵢ': '−·−−', 'Y': '−·−−',
+            'ⵣ': '−−··', 'Z': '−−··',
+            'ⴹ': '·−·−', 'Ä': '·−·−',
+            'ⴳⵯ': '·−−·−', 'À': '·−−·−',
+            'ⴽⵯ': '−·−··', 'Ç': '−·−··',
+            'ⵕ': '−−−−', 'CH': '−−−−',
+            'ⵚ': '··−−·', 'Ð': '··−−·',
+            'ⵟ': '·−··−', 'È': '·−··−',
+            'ⵥ': '··−··', 'É': '··−··',
+            'Ñ': '−−·−−', 'Ö': '−−−·',
+            'Š': '···−·', 'Þ': '·−−··',
+            'Ü': '··−−', '.': '·−·−·−',
+            ',': '−−··−−', '?': '··−−··',
+            '!': '−·−·−−', '/': '−··−·',
+            '(': '−·−−·', ')': '−·−−·−',
+            '&': '·−···', ':': '−−−···',
+            ';': '−·−·−·', '=': '−···−',
+            '+': '·−·−·', '-': '−····−',
+            '_': '··−−·−', '"': '·−··−·',
+            '$': '···−··−', '@': '·−−·−·',
+            '1': '·−−−−', '2': '··−−−',
+            '3': '···−−', '4': '····−',
+            '5': '·····', '6': '−····',
+            '7': '−−···', '8': '−−−··',
+            '9': '−−−−·', '0': '−−−−−'
+        };
+
+        // Reverse mapping for Morse to text
+        const morseToText = {};
+        for (const [char, morse] of Object.entries(morseMapping)) {
+            if (!morseToText[morse]) {
+                morseToText[morse] = { amazigh: '', latin: '' };
+            }
+            if (char.match(/[ⴰ-ⵥ]/)) {
+                morseToText[morse].amazigh = char;
+            } else {
+                morseToText[morse].latin = char;
+            }
+        }
+
+        let currentMode = 'amazigh';
+
+        function convertToMorse() {
+            const input = document.getElementById('textInput').value.toUpperCase();
+            const words = input.split(/\s+/).filter(word => word);
+            let output = '';
+            for (let word of words) {
+                let currentWord = '';
+                for (let char of word) {
+                    if (morseMapping[char]) {
+                        currentWord += morseMapping[char] + '/';
+                    }
+                }
+                if (currentWord) {
+                    output += currentWord.slice(0, -1) + '///';
+                }
+            }
+            output = output.slice(0, -3); // Remove trailing ///
+            document.getElementById('morseOutput').textContent = output || 'Invalid character(s)';
+        }
+
+        function convertToText() {
+            const input = document.getElementById('morseInput').value.trim();
+            const morseWords = input.split('///').map(word => word.trim()).filter(word => word);
+            let output = '';
+            for (let word of morseWords) {
+                const morseChars = word.split('/').filter(c => c);
+                for (let morse of morseChars) {
+                    const char = morseToText[morse];
+                    output += char ? (currentMode === 'amazigh' ? char.amazigh : char.latin) : '';
+                }
+                output += ' ';
+            }
+            document.getElementById('textOutput').textContent = output.trim() || 'Invalid Morse code';
+        }
+
+        function addMorseSymbol(symbol) {
+            const morseInput = document.getElementById('morseInput');
+            morseInput.value += symbol;
+            convertToText();
+        }
+
+        function clearMorseInput() {
+            document.getElementById('morseInput').value = '';
+            document.getElementById('textOutput').textContent = '';
+        }
+
+        // Mode switching
+        document.getElementById('amazighMode').addEventListener('click', () => {
+            currentMode = 'amazigh';
+            document.getElementById('amazighMode').classList.add('bg-blue-500', 'text-white');
+            document.getElementById('amazighMode').classList.remove('bg-gray-200');
+            document.getElementById('latinMode').classList.add('bg-gray-200');
+            document.getElementById('latinMode').classList.remove('bg-blue-500', 'text-white');
+            document.getElementById('textInput').placeholder = 'Enter Amazigh text';
+            convertToMorse();
+            convertToText();
+        });
+
+        document.getElementById('latinMode').addEventListener('click', () => {
+            currentMode = 'latin';
+            document.getElementById('latinMode').classList.add('bg-blue-500', 'text-white');
+            document.getElementById('latinMode').classList.remove('bg-gray-200');
+            document.getElementById('amazighMode').classList.add('bg-gray-200');
+            document.getElementById('amazighMode').classList.remove('bg-blue-500', 'text-white');
+            document.getElementById('textInput').placeholder = 'Enter Latin text';
+            convertToMorse();
+            convertToText();
+        });
+
+        // Live conversion
+        document.getElementById('textInput').addEventListener('input', convertToMorse);
+        document.getElementById('morseInput').addEventListener('input', convertToText);
+    </script>
+</body>
+</html>
