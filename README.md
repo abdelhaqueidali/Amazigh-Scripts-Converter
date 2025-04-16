@@ -27,7 +27,7 @@ For a simplified version with only Tifinagh to Latin and Latin to Tifinagh conve
 
 *  Tifinagh : It refers the 33 main letters of the alphabet
 *  Latin : It refers to the Amazigh latin letters
-*  OPV : It refers to the old Latin mappings of the fonts of Ircam and Tawalt, they are two different ones, If you copy a Tifinagh text from a book, you get Latin script that is not the main Amazigh latin, but rather eather Ircam opv or Tawalt opv fonts. The naming of OPV refers to the letters OPV that are mapped to a completely different letters in Tifinagh, the rest makes sens.
+*  OPV : It refers to the traditional mapping of Tifinagh letters to Latin keyboards, especially azerty, as well as the mapping to old Latin mappings of the fonts of Tawalt and Ircam, Tawal and Ircam mappings are different in mapping emphatic letters while they agree on the 31 letter, no ⵯ included in this comparison, If you copy a Tifinagh text from a book, you get Latin script that is not Tifinagh nor the main Amazigh latin, but rather eather Ircam opv or Tawalt opv fonts. The naming of OPV refers to the letters O-P-V that are mapped to a completely different counter part letters in Tifinagh, the rest makes sens.
 *  Latin (Imouhagh) : It refers to the Latin used by the Tuareg which have the letter ⴻ mapped to an upside down e, while normal e is mapped to a special vowel.
 For the mapping of each script with the other, check the html code, the script part. It has the mapping and there is where to preform any updates.
 *   **Advanced Text Manipulation:**
