@@ -1,0 +1,402 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row =>
+                    row.some(cell => cell !== '' && cell !== null && cell !== undefined)
+                );
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T9 Keyboard Converter</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 80%;
+            max-width: 600px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .input-output {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+
+        .input-output label {
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .input-output textarea {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: vertical;
+            font-size: 16px;
+            height: 100px;
+            width: 98%;
+        }
+
+        .switch-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px #2196F3;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        .keyboard {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .key {
+            background-color: #eee;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 15px;
+            text-align: center;
+            font-size: 20px;
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.2s ease;
+        }
+
+        .key:hover {
+            background-color: #ddd;
+        }
+
+        .key:active {
+            background-color: #ccc;
+        }
+
+        #backspace {
+            grid-column: 1 / -1;
+            background-color: #ddd;
+        }
+
+        #backspace:hover {
+            background-color: #ccc;
+        }
+
+        #backspace:active {
+            background-color: #bbb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>T9 Keyboard Converter</h1>
+
+        <div class="switch-container">
+            <label class="switch">
+                <input type="checkbox" id="conversionSwitch">
+                <span class="slider round"></span>
+            </label>
+            <span>Convert Text to T9</span>
+        </div>
+
+        <div class="input-output">
+            <label for="inputCode">Input:</label>
+            <textarea id="inputCode" placeholder="Enter text or T9 code"></textarea>
+        </div>
+
+        <div class="input-output">
+            <label for="outputText">Output:</label>
+            <textarea id="outputText" readonly placeholder="Translated output will appear here"></textarea>
+        </div>
+
+        <div class="keyboard">
+            <div class="key" data-key="1">1<br><small>.,?!'\"-</small></div>
+            <div class="key" data-key="2">2<br><small>ⴰⴱⴳⴷ</small></div>
+            <div class="key" data-key="3">3<br><small>ⴹⴻⴼⴽ</small></div>
+            <div class="key" data-key="4">4<br><small>ⵀⵃⵄⵅ</small></div>
+            <div class="key" data-key="5">5<br><small>ⵇⵉⵊⵍ</small></div>
+            <div class="key" data-key="6">6<br><small>ⵎⵏⵓⵔ</small></div>
+            <div class="key" data-key="7">7<br><small>ⵕⵖⵙⵚ</small></div>
+            <div class="key" data-key="8">8<br><small>ⵛⵜⵟⵡ</small></div>
+            <div class="key" data-key="9">9<br><small>ⵢⵣⵥⵯ</small></div>
+            <div class="key" data-key="*">*</div>
+            <div class="key" data-key="0">0</div>
+            <div class="key" data-key="#">#</div>
+            <div class="key" id="backspace">Backspace</div>
+        </div>
+    </div>
+
+    <script>
+        const inputCode = document.getElementById('inputCode');
+        const outputText = document.getElementById('outputText');
+        const conversionSwitch = document.getElementById('conversionSwitch');
+        const keyboard = document.querySelector('.keyboard');
+        const keys = document.querySelectorAll('.key');
+        const backspaceButton = document.getElementById('backspace');
+
+        const t9Mapping = {
+            '2': ['ⴰ', 'ⴱ', 'ⴳ', 'ⴷ'],
+            '3': ['ⴹ', 'ⴻ', 'ⴼ', 'ⴽ'],
+            '4': ['ⵀ', 'ⵃ', 'ⵄ', 'ⵅ'],
+            '5': ['ⵇ', 'ⵉ', 'ⵊ', 'ⵍ'],
+            '6': ['ⵎ', 'ⵏ', 'ⵓ', 'ⵔ'],
+            '7': ['ⵕ', 'ⵖ', 'ⵙ', 'ⵚ'],
+            '8': ['ⵛ', 'ⵜ', 'ⵟ', 'ⵡ'],
+            '9': ['ⵢ', 'ⵣ', 'ⵥ', 'ⵯ'],
+            '0': [' '],
+            '1': ['.', ',', '?', '!', '\'', '"', '-'],
+            '*': ['*'],
+            '#': ['#']
+        };
+
+        const reverseT9Mapping = {
+            'ⴰ': '21', 'ⴱ': '22', 'ⴳ': '23', 'ⴷ': '24',
+            'ⴹ': '31', 'ⴻ': '32', 'ⴼ': '33', 'ⴽ': '34',
+            'ⵀ': '41', 'ⵃ': '42', 'ⵄ': '43', 'ⵅ': '44',
+            'ⵇ': '51', 'ⵉ': '52', 'ⵊ': '53', 'ⵍ': '54',
+            'ⵎ': '61', 'ⵏ': '62', 'ⵓ': '63', 'ⵔ': '64',
+            'ⵕ': '71', 'ⵖ': '72', 'ⵙ': '73', 'ⵚ': '74',
+            'ⵛ': '81', 'ⵜ': '82', 'ⵟ': '83', 'ⵡ': '84',
+            'ⵢ': '91', 'ⵣ': '92', 'ⵥ': '93', 'ⵯ': '94',
+            ' ': '01',
+            '.': '11', ',': '12', '?': '13', '!': '14', '\'': '15', '"': '16', '-': '17'
+        };
+
+        // Handle keyboard clicks
+        keys.forEach(key => {
+            key.addEventListener('click', () => {
+                if (!conversionSwitch.checked) {
+                    inputCode.value += key.dataset.key;
+                    autoAddHyphen();
+                    convertCode();
+                }
+            });
+        });
+
+        // Handle input changes
+        inputCode.addEventListener('input', () => {
+            if (!conversionSwitch.checked) {
+                autoAddHyphen();
+            }
+            if (conversionSwitch.checked) {
+                convertToT9();
+            } else {
+                convertCode();
+            }
+        });
+
+        // Handle backspace key press
+        inputCode.addEventListener('keydown', (e) => {
+            if (e.key === 'Backspace' && !conversionSwitch.checked) {
+                e.preventDefault();
+                handleBackspace();
+            }
+        });
+
+        // Handle switch toggle
+        conversionSwitch.addEventListener('change', () => {
+            inputCode.value = '';
+            outputText.value = '';
+            if (conversionSwitch.checked) {
+                keyboard.style.display = 'none';
+            } else {
+                keyboard.style.display = 'grid';
+            }
+        });
+
+        // Handle T9 keyboard backspace
+        backspaceButton.addEventListener('click', () => {
+            if (!conversionSwitch.checked) {
+                handleBackspace();
+            }
+        });
+
+        function autoAddHyphen() {
+            let value = inputCode.value;
+            if (value.length >= 2 && !value.endsWith('-')) {
+                const lastTwo = value.slice(-2);
+                if (/^\d{2}$/.test(lastTwo)) {
+                    inputCode.value = value + '-';
+                }
+            }
+        }
+
+        function handleBackspace() {
+            let currentValue = inputCode.value;
+            if (currentValue.length === 0) return;
+
+            // If ends with hyphen, remove the preceding number and hyphen
+            if (currentValue.endsWith('-')) {
+                inputCode.value = currentValue.slice(0, -3);
+            } else {
+                // Remove last character (number) and preceding hyphen if present
+                if (currentValue.length >= 3 && currentValue[currentValue.length - 2] === '-') {
+                    inputCode.value = currentValue.slice(0, -2);
+                } else {
+                    inputCode.value = currentValue.slice(0, -1);
+                }
+            }
+            convertCode();
+        }
+
+        function convertCode() {
+            const code = inputCode.value.trim();
+            const codeSegments = code.split('-');
+            let result = '';
+
+            for (const segment of codeSegments) {
+                if (segment.length === 1 && !isNaN(segment)) {
+                    result += segment;
+                    continue;
+                }
+
+                if (segment.length !== 2) {
+                    if (segment.length > 0) {
+                        result = 'Invalid Input';
+                        break;
+                    }
+                    continue;
+                }
+
+                const key = segment[0];
+                const pressCount = parseInt(segment[1]);
+
+                if (isNaN(pressCount) || pressCount < 1) {
+                    result = 'Invalid Input';
+                    break;
+                }
+
+                if (t9Mapping[key]) {
+                    const letters = t9Mapping[key];
+                    const index = (pressCount - 1) % letters.length;
+                    result += letters[index];
+                } else {
+                    if (!isNaN(parseInt(key))) {
+                        result += key;
+                    } else {
+                        result = 'Invalid Input';
+                        break;
+                    }
+                }
+            }
+
+            outputText.value = result;
+        }
+
+        function convertToT9() {
+            const text = inputCode.value.toLowerCase();
+            let t9Code = '';
+
+            for (let char of text) {
+                if (reverseT9Mapping[char]) {
+                    t9Code += reverseT9Mapping[char] + '-';
+                } else {
+                    t9Code += '?-';
+                }
+            }
+
+            outputText.value = t9Code.slice(0, -1); // Remove trailing hyphen
+        }
+    </script>
+</body>
+</html>
