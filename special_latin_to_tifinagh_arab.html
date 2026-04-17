@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALATIN ΓER TFINAΓ / TAƐRABT</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --container-bg: #ffffff;
+            --primary: #2c3e50;
+            --accent: #3498db;
+            --accent-hover: #2980b9;
+            --text-color: #333333;
+            --border-color: #dcdcdc;
+            --btn-text: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--container-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            box-sizing: border-box;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            line-height: 1.4;
+        }
+
+        .box {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        textarea {
+            width: 100%;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-size: 1.1rem;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-sizing: border-box;
+            resize: vertical;
+            min-height: 100px;
+            background-color: #fafafa;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            background-color: #fff;
+        }
+
+        .quick-keyboard {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+            margin-bottom: 12px;
+        }
+
+        .quick-keyboard button {
+            flex: 0 0 auto;
+            min-width: 38px;
+            padding: 8px 12px;
+            font-size: 1.1rem;
+            background-color: #ecf0f1;
+            color: var(--primary);
+            border: 1px solid #bdc3c7;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+
+        .quick-keyboard button:hover {
+            background-color: #d5dbdb;
+        }
+
+        .quick-keyboard button:active {
+            transform: scale(0.95);
+        }
+
+        #shiftBtn {
+            background-color: #d1d8e0;
+            font-weight: bold;
+            min-width: 60px;
+        }
+
+        #shiftBtn.active {
+            background-color: #7f8c8d;
+            color: white;
+            border-color: #636e72;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .actions button, .main-actions button {
+            background-color: var(--accent);
+            color: var(--btn-text);
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: background-color 0.2s ease;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .actions button:hover, .main-actions button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .actions button.secondary {
+            background-color: #7f8c8d;
+        }
+
+        .actions button.secondary:hover {
+            background-color: #636e72;
+        }
+
+        .main-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid var(--border-color);
+            flex-wrap: wrap;
+        }
+
+        .main-actions button {
+            padding: 14px 20px;
+            font-size: 1.1rem;
+            background-color: var(--primary);
+        }
+
+        .main-actions button:hover {
+            background-color: #1a252f;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            h1 {
+                font-size: 1.5rem;
+            }
+            .actions button, .main-actions button {
+                flex: 100%;
+            }
+            .quick-keyboard button {
+                padding: 10px;
+                font-size: 1.2rem;
+                flex-grow: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>ALATIN ΓER TFINAΓ / TAƐRABT<br>ⴰⵍⴰⵜⵉⵏ ⵖⵔ ⵜⴼⵉⵏⴰⵖ / ألاتين غر تعرابت</h1>
+
+    <div class="box">
+        <label for="inputStr">Input (Latin):</label>
+        <textarea id="inputStr" placeholder="Type here: Ɣur'neɣ, Ass-a... (Tip: type -- to instantly get ' )" oninput="convertText()"></textarea>
+        
+        <div class="quick-keyboard">
+            <button type="button" id="shiftBtn" onclick="toggleShift()" title="Toggle Uppercase/Lowercase">⬆ Shift</button>
+            <button type="button" onclick="insertChar('-')" title="Dash">-</button>
+            <button type="button" onclick="insertChar('\'')" title="Apostrophe">'</button>
+            <button type="button" class="char-btn" onclick="insertChar(this.textContent)">ḍ</button>
+            <button type="button" class="char-btn" onclick="insertChar(this.textContent)">ə</button>
+            <button type="button" class="char-btn" onclick="insertChar(this.textContent)">ḥ</button>
+            <button type="button" class="char-btn" onclick="insertChar(this.textContent)">ɛ</button>
+            <button type="button" class="char-btn" onclick="insertChar(this.textContent)">ṛ</button>
+            <button type="button" class="char-btn" onclick="insertChar(this.textContent)">ɣ</button>
+            <button type="button" class="char-btn" onclick="insertChar(this.textContent)">γ</button>
+            <button type="button" class="char-btn" onclick="insertChar(this.textContent)">ṣ</button>
+            <button type="button" class="char-btn" onclick="insertChar(this.textContent)">ṭ</button>
+            <button type="button" class="char-btn" onclick="insertChar(this.textContent)">ţ</button>
+            <button type="button" class="char-btn" onclick="insertChar(this.textContent)">ẓ</button>
+            <button type="button" class="char-btn" onclick="insertChar(this.textContent)">ž</button>
+            <button type="button" class="char-btn" onclick="insertChar(this.textContent)">ʷ</button>
+            <button type="button" class="char-btn" onclick="insertChar(this.textContent)">ǧ</button>
+            <button type="button" class="char-btn" onclick="insertChar(this.textContent)">č</button>
+            <button type="button" class="char-btn" onclick="insertChar(this.textContent)">ř</button>
+       </div>
+
+        <div class="actions">
+            <button class="secondary" onclick="clearInput()">Clear Input</button>
+            <button onclick="copyToClipboard('inputStr')">Copy Input</button>
+        </div>
+    </div>
+
+    <div class="box">
+        <label for="latinOut">Latin Result:</label>
+        <textarea id="latinOut" readonly></textarea>
+        <div class="actions">
+            <button onclick="copyToClipboard('latinOut')">Copy Latin</button>
+        </div>
+    </div>
+
+    <div class="box">
+        <label for="tifinaghOut">Tifinagh Result:</label>
+        <textarea id="tifinaghOut" readonly></textarea>
+        <div class="actions">
+            <button onclick="copyToClipboard('tifinaghOut')">Copy Tifinagh</button>
+        </div>
+    </div>
+
+    <div class="box">
+        <label for="arabicOut">Arabic Result:</label>
+        <textarea id="arabicOut" dir="rtl" readonly></textarea>
+        <div class="actions">
+            <button onclick="copyToClipboard('arabicOut')">Copy Arabic</button>
+        </div>
+    </div>
+
+    <div class="main-actions">
+        <button onclick="copyAll()">Copy All Results</button>
+        <button onclick="downloadFile()">Download TXT</button>
+    </div>
+</div>
+
+<script>
+    const tifinaghMap = {
+        'a': 'ⴰ', 'b': 'ⴱ', 'g': 'ⴳ', 'd': 'ⴷ', 'ḍ': 'ⴹ', 'e': 'ⴻ', 'ə': '', 'f': 'ⴼ', 'k': 'ⴽ', 'h': 'ⵀ', 'ḥ': 'ⵃ', 'ɛ': 'ⵄ', 'ε': 'ⵄ', 'x': 'ⵅ', 'q': 'ⵇ', 'i': 'ⵉ', 'j': 'ⵊ', 'l': 'ⵍ', 'm': 'ⵎ', 'n': 'ⵏ', 'u': 'ⵓ', 'r': 'ⵔ', 'ṛ': 'ⵕ', 'ɣ': 'ⵖ', 'γ': 'ⵖ', 's': 'ⵙ', 'ṣ': 'ⵚ', 'c': 'ⵛ', 't': 'ⵜ', 'ṭ': 'ⵟ', 'w': 'ⵡ', 'y': 'ⵢ', 'z': 'ⵣ', 'ẓ': 'ⵥ', 'ʷ': 'ⵯ', 'ᵒ': 'ⵯ', '°': 'ⵯ', 'ǧ': 'ⴵ', 'ţ': 'ⵜ', 'č': 'ⵞ', 'ž': 'ⴷⵣ', 'žž': 'ⴷⴷⵣ', 'ř': 'ⵍ',
+        'A': 'ⴰ', 'B': 'ⴱ', 'G': 'ⴳ', 'D': 'ⴷ', 'Ḍ': 'ⴹ', 'E': 'ⴻ', 'Ə': '', 'F': 'ⴼ', 'K': 'ⴽ', 'H': 'ⵀ', 'Ḥ': 'ⵃ', 'Ɛ': 'ⵄ', 'Ε': 'ⵄ', 'X': 'ⵅ', 'Q': 'ⵇ', 'I': 'ⵉ', 'J': 'ⵊ', 'L': 'ⵍ', 'M': 'ⵎ', 'N': 'ⵏ', 'U': 'ⵓ', 'R': 'ⵔ', 'Ṛ': 'ⵕ', 'Ɣ': 'ⵖ', 'Γ': 'ⵖ', 'S': 'ⵙ', 'Ṣ': 'ⵚ', 'C': 'ⵛ', 'T': 'ⵜ', 'Ṭ': 'ⵟ', 'W': 'ⵡ', 'Y': 'ⵢ', 'Z': 'ⵣ', 'Ẓ': 'ⵥ', 'Ǧ': 'ⴵ', 'Ţ': 'ⵜ', 'Č': 'ⵞ', 'Ž': 'ⴷⵣ', 'ŽŽ': 'ⴷⴷⵣ', 'Ř': 'ⵍ'
+    };
+
+    const escapeRegExp = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    
+    const sortedTifKeys = Object.keys(tifinaghMap).sort((a, b) => b.length - a.length);
+    const tifMapRegex = new RegExp(sortedTifKeys.map(escapeRegExp).join('|'), 'g');
+    
+    const tagRegex = /\[ltn:(.*?)\]|\\(.*?)\\|\[(.*?)\]/gi;
+
+    let isShifted = false;
+
+    function toggleShift() {
+        isShifted = !isShifted;
+        const shiftBtn = document.getElementById('shiftBtn');
+        const charBtns = document.querySelectorAll('.char-btn');
+        
+        if (isShifted) {
+            shiftBtn.classList.add('active');
+            shiftBtn.innerText = '⬇ Shift';
+        } else {
+            shiftBtn.classList.remove('active');
+            shiftBtn.innerText = '⬆ Shift';
+        }
+
+        charBtns.forEach(btn => {
+            btn.innerText = isShifted ? btn.innerText.toUpperCase() : btn.innerText.toLowerCase();
+        });
+        
+        document.getElementById('inputStr').focus();
+    }
+
+    function insertChar(char) {
+        const inputField = document.getElementById('inputStr');
+        const start = inputField.selectionStart;
+        const end = inputField.selectionEnd;
+        const text = inputField.value;
+        
+        inputField.value = text.substring(0, start) + char + text.substring(end);
+        inputField.selectionStart = inputField.selectionEnd = start + char.length;
+        
+        inputField.focus();
+        convertText();
+    }
+
+    function convertText() {
+        const inputField = document.getElementById('inputStr');
+        
+        if (inputField.value.includes('--')) {
+            const start = inputField.selectionStart;
+            const textBefore = inputField.value;
+            
+            inputField.value = textBefore.replace(/--/g, "'");
+            
+            const diff = textBefore.length - inputField.value.length;
+            inputField.selectionStart = inputField.selectionEnd = start - diff;
+        }
+
+        const inputStr = inputField.value;
+
+        // LATIN
+        let latResult = inputStr;
+        latResult = latResult.replace(tagRegex, (match, p1, p2, p3) => p1 || p2 || p3);
+        latResult = latResult.replace(/['`~]/g, '-');
+        document.getElementById('latinOut').value = latResult;
+
+        // TIFINAGH & ARABIC
+        let tifResult = "";
+        let arResult = "";
+        let lastIndex = 0;
+        let match;
+        
+        tagRegex.lastIndex = 0;
+
+        while ((match = tagRegex.exec(inputStr)) !== null) {
+            let chunk = inputStr.substring(lastIndex, match.index);
+            tifResult += convertToTifinaghChunk(chunk);
+            arResult += convertToArabicChunk(chunk);
+
+            let tagContent = match[1] || match[2] || match[3];
+            tifResult += tagContent;
+            arResult += tagContent;
+
+            lastIndex = tagRegex.lastIndex;
+        }
+        
+        let finalChunk = inputStr.substring(lastIndex);
+        tifResult += convertToTifinaghChunk(finalChunk);
+        arResult += convertToArabicChunk(finalChunk);
+
+        document.getElementById('tifinaghOut').value = tifResult;
+        document.getElementById('arabicOut').value = arResult;
+    }
+
+    function convertToTifinaghChunk(str) {
+        let chunk = str.replace(/-/g, ' ');
+        chunk = chunk.replace(/['`~]/g, '');
+        chunk = chunk.replace(tifMapRegex, m => tifinaghMap[m]);
+        
+        let prevChunk;
+        do {
+            prevChunk = chunk;
+            chunk = chunk.replace(/([\u2D30-\u2D7F])ⴻ([\u2D30-\u2D7F])/g, (match, p1, p2) => {
+                return p1 === p2 ? match : p1 + p2;
+            });
+        } while (chunk !== prevChunk);
+
+        return chunk;
+    }
+
+    function convertToArabicChunk(str) {
+        let chunk = str.toLowerCase();
+        
+        chunk = chunk.replace(/-/g, ' ');
+        chunk = chunk.replace(/['`~]/g, '');
+
+        // Specific exceptions
+        chunk = chunk.replace(/muy/g, 'موي');
+        chunk = chunk.replace(/myu/g, 'ميُو');
+        chunk = chunk.replace(/yi/g, 'يِي');
+        chunk = chunk.replace(/yu/g, 'يُو');
+        chunk = chunk.replace(/wi/g, 'وِي');
+        chunk = chunk.replace(/wu/g, 'وُو');
+        chunk = chunk.replace(/žž/g, 'دّز');
+
+        // Double letters -> Single letter + Shadda
+        const consonants = 'bcdfghjklmnpqrstvwxyzḍḥɛεxqṛɣγṣṭẓʷᵒ°ǧţčžř';
+        const doubleRegex = new RegExp(`([${consonants}])\\1`, 'g');
+        chunk = chunk.replace(doubleRegex, '$1ّ');
+
+        // Vowels strictly after a letter
+        const allChars = 'abcdefghijklmnopqrstuvwxyzḍḥɛεxqṛɣγṣṭẓʷᵒ°ǧţčžřّ';
+        chunk = chunk.replace(new RegExp(`([${allChars}])a`, 'g'), '$1ا');
+        chunk = chunk.replace(new RegExp(`([${allChars}])u`, 'g'), '$1و');
+        chunk = chunk.replace(new RegExp(`([${allChars}])i`, 'g'), '$1ي');
+
+        // Drop 'e'
+        chunk = chunk.replace(/e/g, '');
+
+        // Final Mapping Dictionary
+        const arMap = {
+            'a': 'أ', 'b': 'ب', 'g': 'ݣ', 'd': 'د', 'ḍ': 'ض', 'f': 'ف', 'ə': '', 'k': 'ك', 'h': 'ه', 'ḥ': 'ح', 'ɛ': 'ع', 'ε': 'ع', 'x': 'خ', 'q': 'ق', 'i': 'ئ', 'j': 'ج', 'l': 'ل', 'm': 'م', 'n': 'ن', 'u': 'ؤ', 'r': 'ر', 'ṛ': 'ڕ', 'ɣ': 'غ', 'γ': 'غ', 's': 'س', 'ṣ': 'ص', 'c': 'ش', 't': 'ت', 'ṭ': 'ط', 'w': 'و', 'y': 'ي', 'z': 'ز', 'ẓ': 'ژ', 'ʷ': 'ْࢫ', 'ᵒ': 'ْࢫ', '°': 'ْࢫ', 'ǧ': 'دج', 'ţ': 'ت', 'č': 'تش', 'ž': 'دز', 'ř': 'ل'
+        };
+
+        const sortedArKeys = Object.keys(arMap).sort((a, b) => b.length - a.length);
+        const arMapRegex = new RegExp(sortedArKeys.map(escapeRegExp).join('|'), 'g');
+        
+        chunk = chunk.replace(arMapRegex, m => arMap[m]);
+
+        return chunk;
+    }
+
+    function clearInput() {
+        document.getElementById('inputStr').value = '';
+        document.getElementById('latinOut').value = '';
+        document.getElementById('tifinaghOut').value = '';
+        document.getElementById('arabicOut').value = '';
+        document.getElementById('inputStr').focus();
+    }
+
+    function copyToClipboard(elementId) {
+        const el = document.getElementById(elementId);
+        if(!el.value) return;
+        el.select();
+        document.execCommand('copy');
+        
+        const btn = event.target;
+        const originalText = btn.innerText;
+        btn.innerText = 'Copied!';
+        setTimeout(() => btn.innerText = originalText, 1500);
+    }
+
+    function copyAll() {
+        const lat = document.getElementById('latinOut').value;
+        const tif = document.getElementById('tifinaghOut').value;
+        const ar = document.getElementById('arabicOut').value;
+        if(!lat && !tif && !ar) return;
+        
+        const combined = `${lat}\n\n${tif}\n\n${ar}`;
+        navigator.clipboard.writeText(combined).then(() => {
+            const btn = event.target;
+            const originalText = btn.innerText;
+            btn.innerText = 'All Copied!';
+            setTimeout(() => btn.innerText = originalText, 1500);
+        });
+    }
+
+    function downloadFile() {
+        const input = document.getElementById('inputStr').value;
+        const lat = document.getElementById('latinOut').value;
+        const tif = document.getElementById('tifinaghOut').value;
+        const ar = document.getElementById('arabicOut').value;
+        
+        if (!input) return alert("Nothing to download!");
+
+        let cleanName = input.replace(/[^a-zA-Z0-9]/g, '_').replace(/__+/g, '_').substring(0, 20);
+        if (cleanName.endsWith('_')) cleanName = cleanName.slice(0, -1);
+        if (!cleanName) cleanName = "conversion";
+        
+        const filename = `${cleanName}.txt`;
+        const content = `--- INPUT (RAW) ---\n${input}\n\n--- LATIN RESULT ---\n${lat}\n\n--- TIFINAGH RESULT ---\n${tif}\n\n--- ARABIC RESULT ---\n${ar}`;
+
+        const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+</script>
+
+</body>
+</html>
