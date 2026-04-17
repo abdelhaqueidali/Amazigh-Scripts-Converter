@@ -316,15 +316,7 @@
 
         const inputStr = inputField.value;
 
-        // LATIN
-        let latResult = inputStr;
-        latResult = latResult.replace(tagRegex, (match, p1, p2, p3) => p1 || p2 || p3);
-        latResult = latResult.replace(/['`~]/g, '-');
-        latResult = latResult.replace(/[Ə]/g, 'E');
-        latResult = latResult.replace(/[ə]/g, 'e');
-        document.getElementById('latinOut').value = latResult;
-
-        // TIFINAGH & ARABIC
+        let latResult = "";
         let tifResult = "";
         let arResult = "";
         let lastIndex = 0;
@@ -334,10 +326,13 @@
 
         while ((match = tagRegex.exec(inputStr)) !== null) {
             let chunk = inputStr.substring(lastIndex, match.index);
+            
+            latResult += convertToLatinChunk(chunk);
             tifResult += convertToTifinaghChunk(chunk);
             arResult += convertToArabicChunk(chunk);
 
             let tagContent = match[1] || match[2] || match[3];
+            latResult += tagContent;
             tifResult += tagContent;
             arResult += tagContent;
 
@@ -345,16 +340,30 @@
         }
         
         let finalChunk = inputStr.substring(lastIndex);
+        latResult += convertToLatinChunk(finalChunk);
         tifResult += convertToTifinaghChunk(finalChunk);
         arResult += convertToArabicChunk(finalChunk);
 
+        document.getElementById('latinOut').value = latResult;
         document.getElementById('tifinaghOut').value = tifResult;
         document.getElementById('arabicOut').value = arResult;
     }
 
+    function convertToLatinChunk(str) {
+        let chunk = str;
+        // Only replace apostrophe variants with '-' if between two letters
+        chunk = chunk.replace(/(?<=\p{L})['`~](?=\p{L})/gu, '-');
+        chunk = chunk.replace(/[Ə]/g, 'E');
+        chunk = chunk.replace(/[ə]/g, 'e');
+        return chunk;
+    }
+
     function convertToTifinaghChunk(str) {
-        let chunk = str.replace(/-/g, ' ');
-        chunk = chunk.replace(/['`~]/g, '');
+        let chunk = str;
+        // Only replace '-' with space, and drop apostrophes, if between letters
+        chunk = chunk.replace(/(?<=\p{L})-(?=\p{L})/gu, ' ');
+        chunk = chunk.replace(/(?<=\p{L})['`~](?=\p{L})/gu, '');
+        
         chunk = chunk.replace(tifMapRegex, m => tifinaghMap[m]);
         
         let prevChunk;
@@ -371,8 +380,9 @@
     function convertToArabicChunk(str) {
         let chunk = str.toLowerCase();
         
-        chunk = chunk.replace(/-/g, ' ');
-        chunk = chunk.replace(/['`~]/g, '');
+        // Only replace '-' with space, and drop apostrophes, if between letters
+        chunk = chunk.replace(/(?<=\p{L})-(?=\p{L})/gu, ' ');
+        chunk = chunk.replace(/(?<=\p{L})['`~](?=\p{L})/gu, '');
 
         // Specific exceptions
         chunk = chunk.replace(/muy/g, 'موي');
@@ -471,6 +481,7 @@
         URL.revokeObjectURL(url);
     }
 </script>
+
 
 </body>
 </html>
