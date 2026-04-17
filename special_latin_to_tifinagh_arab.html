@@ -320,6 +320,8 @@
         let latResult = inputStr;
         latResult = latResult.replace(tagRegex, (match, p1, p2, p3) => p1 || p2 || p3);
         latResult = latResult.replace(/['`~]/g, '-');
+        latResult = latResult.replace(/[Ə]/g, 'E');
+        latResult = latResult.replace(/[ə]/g, 'e');
         document.getElementById('latinOut').value = latResult;
 
         // TIFINAGH & ARABIC
