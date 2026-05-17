@@ -1,33 +1,4 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row =>
-                    row.some(cell => cell !== '' && cell !== null && cell !== undefined)
-                );
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -43,8 +14,9 @@
         }
     </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
-    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+<!-- Removed items-center, added py-10 and px-4 for natural scrolling space -->
+<body class="bg-gray-100 flex justify-center min-h-screen py-10 px-4">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md h-fit">
         <h1 class="text-2xl font-bold mb-4 text-center">Amazigh & Latin ↔ Morse Converter</h1>
         
         <!-- Input Mode Selection -->
@@ -59,7 +31,7 @@
         <!-- Amazigh/Latin to Morse -->
         <div class="mb-6">
             <label for="textInput" class="block text-sm font-medium text-gray-700">Amazigh/Latin Input</label>
-            <input id="textInput" type="text" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Enter Amazigh or Latin text">
+            <input id="textInput" type="text" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Enter Amazigh text">
             <p id="morseOutput" class="mt-2 text-gray-700 break-all"></p>
         </div>
         
@@ -80,7 +52,7 @@
         <!-- Explanation -->
         <div class="mb-6">
             <h2 class="text-xl font-semibold mb-2">How It Works</h2>
-            <p class="text-gray-700">
+            <p class="text-gray-700 text-sm">
                 This tool converts text between Amazigh (Tifinagh), Latin, and Morse code in real-time as you type. Select the input mode (Amazigh or Latin) using the buttons above. Enter text in the first input to see the Morse code output, or enter Morse code (using dots ·, dashes −, / for letter separation, and /// for word separation) in the second input to see the text output. Use the buttons below the Morse input to add Morse symbols or clear the input. Each Amazigh and Latin character maps to the same Morse code sequence, as shown in the mapping table below.
             </p>
         </div>
@@ -88,82 +60,85 @@
         <!-- Mapping Table -->
         <div>
             <h2 class="text-xl font-semibold mb-2">Amazigh & Latin to Morse Mapping</h2>
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-gray-200">
-                        <th class="p-2 border">Amazigh</th>
-                        <th class="p-2 border">Latin</th>
-                        <th class="p-2 border">Morse</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td class="p-2 border">ⴰ</td><td class="p-2 border">A</td><td class="p-2 border">·−</td></tr>
-                    <tr><td class="p-2 border">ⴱ</td><td class="p-2 border">B</td><td class="p-2 border">−···</td></tr>
-                    <tr><td class="p-2 border">ⵛ</td><td class="p-2 border">C</td><td class="p-2 border">−·−·</td></tr>
-                    <tr><td class="p-2 border">ⴷ</td><td class="p-2 border">D</td><td class="p-2 border">−··</td></tr>
-                    <tr><td class="p-2 border">ⴻ</td><td class="p-2 border">E</td><td class="p-2 border">·</td></tr>
-                    <tr><td class="p-2 border">ⴼ</td><td class="p-2 border">F</td><td class="p-2 border">··−·</td></tr>
-                    <tr><td class="p-2 border">ⴳ</td><td class="p-2 border">G</td><td class="p-2 border">−−·</td></tr>
-                    <tr><td class="p-2 border">ⵀ</td><td class="p-2 border">H</td><td class="p-2 border">····</td></tr>
-                    <tr><td class="p-2 border">ⵉ</td><td class="p-2 border">I</td><td class="p-2 border">··</td></tr>
-                    <tr><td class="p-2 border">ⵊ</td><td class="p-2 border">J</td><td class="p-2 border">·−−−</td></tr>
-                    <tr><td class="p-2 border">ⴽ</td><td class="p-2 border">K</td><td class="p-2 border">−·−</td></tr>
-                    <tr><td class="p-2 border">ⵍ</td><td class="p-2 border">L</td><td class="p-2 border">·−··</td></tr>
-                    <tr><td class="p-2 border">ⵎ</td><td class="p-2 border">M</td><td class="p-2 border">−−</td></tr>
-                    <tr><td class="p-2 border">ⵏ</td><td class="p-2 border">N</td><td class="p-2 border">−·</td></tr>
-                    <tr><td class="p-2 border">ⵄ</td><td class="p-2 border">O</td><td class="p-2 border">−−−</td></tr>
-                    <tr><td class="p-2 border">ⵃ</td><td class="p-2 border">P</td><td class="p-2 border">·−−·</td></tr>
-                    <tr><td class="p-2 border">ⵇ</td><td class="p-2 border">Q</td><td class="p-2 border">−−·−</td></tr>
-                    <tr><td class="p-2 border">ⵔ</td><td class="p-2 border">R</td><td class="p-2 border">·−·</td></tr>
-                    <tr><td class="p-2 border">ⵙ</td><td class="p-2 border">S</td><td class="p-2 border">···</td></tr>
-                    <tr><td class="p-2 border">ⵜ</td><td class="p-2 border">T</td><td class="p-2 border">−</td></tr>
-                    <tr><td class="p-2 border">ⵓ</td><td class="p-2 border">U</td><td class="p-2 border">··−</td></tr>
-                    <tr><td class="p-2 border">ⵖ</td><td class="p-2 border">V</td><td class="p-2 border">···−</td></tr>
-                    <tr><td class="p-2 border">ⵡ</td><td class="p-2 border">W</td><td class="p-2 border">·−−</td></tr>
-                    <tr><td class="p-2 border">ⵅ</td><td class="p-2 border">X</td><td class="p-2 border">−··−</td></tr>
-                    <tr><td class="p-2 border">ⵢ</td><td class="p-2 border">Y</td><td class="p-2 border">−·−−</td></tr>
-                    <tr><td class="p-2 border">ⵣ</td><td class="p-2 border">Z</td><td class="p-2 border">−−··</td></tr>
-                    <tr><td class="p-2 border">ⴹ</td><td class="p-2 border">Ä</td><td class="p-2 border">·−·−</td></tr>
-                    <tr><td class="p-2 border">ⴳⵯ</td><td class="p-2 border">À</td><td class="p-2 border">·−−·−</td></tr>
-                    <tr><td class="p-2 border">ⴽⵯ</td><td class="p-2 border">Ç</td><td class="p-2 border">−·−··</td></tr>
-                    <tr><td class="p-2 border">ⵕ</td><td class="p-2 border">CH</td><td class="p-2 border">−−−−</td></tr>
-                    <tr><td class="p-2 border">ⵚ</td><td class="p-2 border">Ð</td><td class="p-2 border">··−−·</td></tr>
-                    <tr><td class="p-2 border">ⵟ</td><td class="p-2 border">È</td><td class="p-2 border">·−··−</td></tr>
-                    <tr><td class="p-2 border">ⵥ</td><td class="p-2 border">É</td><td class="p-2 border">··−··</td></tr>
-                    <tr><td class="p-2 border"></td><td class="p-2 border">Ñ</td><td class="p-2 border">−−·−−</td></tr>
-                    <tr><td class="p-2 border"></td><td class="p-2 border">Ö</td><td class="p-2 border">−−−·</td></tr>
-                    <tr><td class="p-2 border"></td><td class="p-2 border">Š</td><td class="p-2 border">···−·</td></tr>
-                    <tr><td class="p-2 border"></td><td class="p-2 border">Þ</td><td class="p-2 border">·−−··</td></tr>
-                    <tr><td class="p-2 border"></td><td class="p-2 border">Ü</td><td class="p-2 border">··−−</td></tr>
-                    <tr><td class="p-2 border"></td><td class="p-2 border">.</td><td class="p-2 border">·−·−·−</td></tr>
-                    <tr><td class="p-2 border"></td><td class="p-2 border">,</td><td class="p-2 border">−−··−−</td></tr>
-                    <tr><td class="p-2 border"></td><td class="p-2 border">?</td><td class="p-2 border">··−−··</td></tr>
-                    <tr><td class="p-2 border"></td><td class="p-2 border">!</td><td class="p-2 border">−·−·−−</td></tr>
-                    <tr><td class="p-2 border"></td><td class="p-2 border">/</td><td class="p-2 border">−··−·</td></tr>
-                    <tr><td class="p-2 border"></td><td class="p-2 border">(</td><td class="p-2 border">−·−−·</td></tr>
-                    <tr><td class="p-2 border"></td><td class="p-2 border">)</td><td class="p-2 border">−·−−·−</td></tr>
-                    <tr><td class="p-2 border"></td><td class="p-2 border">&</td><td class="p-2 border">·−···</td></tr>
-                    <tr><td class="p-2 border"></td><td class="p-2 border">:</td><td class="p-2 border">−−−···</td></tr>
-                    <tr><td class="p-2 border"></td><td class="p-2 border">;</td><td class="p-2 border">−·−·−·</td></tr>
-                    <tr><td class="p-2 border"></td><td class="p-2 border">=</td><td class="p-2 border">−···−</td></tr>
-                    <tr><td class="p-2 border"></td><td class="p-2 border">+</td><td class="p-2 border">·−·−·</td></tr>
-                    <tr><td class="p-2 border"></td><td class="p-2 border">-</td><td class="p-2 border">−····−</td></tr>
-                    <tr><td class="p-2 border"></td><td class="p-2 border">_</td><td class="p-2 border">··−−·−</td></tr>
-                    <tr><td class="p-2 border"></td><td class="p-2 border">"</td><td class="p-2 border">·−··−·</td></tr>
-                    <tr><td class="p-2 border"></td><td class="p-2 border">$</td><td class="p-2 border">···−··−</td></tr>
-                    <tr><td class="p-2 border"></td><td class="p-2 border">@</td><td class="p-2 border">·−−·−·</td></tr>
-                    <tr><td class="p-2 border"></td><td class="p-2 border">1</td><td class="p-2 border">·−−−−</td></tr>
-                    <tr><td class="p-2 border"></td><td class="p-2 border">2</td><td class="p-2 border">··−−−</td></tr>
-                    <tr><td class="p-2 border"></td><td class="p-2 border">3</td><td class="p-2 border">···−−</td></tr>
-                    <tr><td class="p-2 border"></td><td class="p-2 border">4</td><td class="p-2 border">····−</td></tr>
-                    <tr><td class="p-2 border"></td><td class="p-2 border">5</td><td class="p-2 border">·····</td></tr>
-                    <tr><td class="p-2 border"></td><td class="p-2 border">6</td><td class="p-2 border">−····</td></tr>
-                    <tr><td class="p-2 border"></td><td class="p-2 border">7</td><td class="p-2 border">−−···</td></tr>
-                    <tr><td class="p-2 border"></td><td class="p-2 border">8</td><td class="p-2 border">−−−··</td></tr>
-                    <tr><td class="p-2 border"></td><td class="p-2 border">9</td><td class="p-2 border">−−−−·</td></tr>
-                    <tr><td class="p-2 border"></td><td class="p-2 border">0</td><td class="p-2 border">−−−−−</td></tr>
-                </tbody>
-            </table>
+            <!-- Added wrapper with max-h-80 and overflow-y-auto to make the table scrollable inside the card -->
+            <div class="max-h-80 overflow-y-auto border border-gray-300 rounded-md">
+                <table class="w-full text-left border-collapse">
+                    <thead class="sticky top-0 bg-gray-200 shadow-sm">
+                        <tr>
+                            <th class="p-2 border">Amazigh</th>
+                            <th class="p-2 border">Latin</th>
+                            <th class="p-2 border">Morse</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class="p-2 border">ⴰ</td><td class="p-2 border">A</td><td class="p-2 border">·−</td></tr>
+                        <tr><td class="p-2 border">ⴱ</td><td class="p-2 border">B</td><td class="p-2 border">−···</td></tr>
+                        <tr><td class="p-2 border">ⵛ</td><td class="p-2 border">C</td><td class="p-2 border">−·−·</td></tr>
+                        <tr><td class="p-2 border">ⴷ</td><td class="p-2 border">D</td><td class="p-2 border">−··</td></tr>
+                        <tr><td class="p-2 border">ⴻ</td><td class="p-2 border">E</td><td class="p-2 border">·</td></tr>
+                        <tr><td class="p-2 border">ⴼ</td><td class="p-2 border">F</td><td class="p-2 border">··−·</td></tr>
+                        <tr><td class="p-2 border">ⴳ</td><td class="p-2 border">G</td><td class="p-2 border">−−·</td></tr>
+                        <tr><td class="p-2 border">ⵀ</td><td class="p-2 border">H</td><td class="p-2 border">····</td></tr>
+                        <tr><td class="p-2 border">ⵉ</td><td class="p-2 border">I</td><td class="p-2 border">··</td></tr>
+                        <tr><td class="p-2 border">ⵊ</td><td class="p-2 border">J</td><td class="p-2 border">·−−−</td></tr>
+                        <tr><td class="p-2 border">ⴽ</td><td class="p-2 border">K</td><td class="p-2 border">−·−</td></tr>
+                        <tr><td class="p-2 border">ⵍ</td><td class="p-2 border">L</td><td class="p-2 border">·−··</td></tr>
+                        <tr><td class="p-2 border">ⵎ</td><td class="p-2 border">M</td><td class="p-2 border">−−</td></tr>
+                        <tr><td class="p-2 border">ⵏ</td><td class="p-2 border">N</td><td class="p-2 border">−·</td></tr>
+                        <tr><td class="p-2 border">ⵄ</td><td class="p-2 border">O</td><td class="p-2 border">−−−</td></tr>
+                        <tr><td class="p-2 border">ⵃ</td><td class="p-2 border">P</td><td class="p-2 border">·−−·</td></tr>
+                        <tr><td class="p-2 border">ⵇ</td><td class="p-2 border">Q</td><td class="p-2 border">−−·−</td></tr>
+                        <tr><td class="p-2 border">ⵔ</td><td class="p-2 border">R</td><td class="p-2 border">·−·</td></tr>
+                        <tr><td class="p-2 border">ⵙ</td><td class="p-2 border">S</td><td class="p-2 border">···</td></tr>
+                        <tr><td class="p-2 border">ⵜ</td><td class="p-2 border">T</td><td class="p-2 border">−</td></tr>
+                        <tr><td class="p-2 border">ⵓ</td><td class="p-2 border">U</td><td class="p-2 border">··−</td></tr>
+                        <tr><td class="p-2 border">ⵖ</td><td class="p-2 border">V</td><td class="p-2 border">···−</td></tr>
+                        <tr><td class="p-2 border">ⵡ</td><td class="p-2 border">W</td><td class="p-2 border">·−−</td></tr>
+                        <tr><td class="p-2 border">ⵅ</td><td class="p-2 border">X</td><td class="p-2 border">−··−</td></tr>
+                        <tr><td class="p-2 border">ⵢ</td><td class="p-2 border">Y</td><td class="p-2 border">−·−−</td></tr>
+                        <tr><td class="p-2 border">ⵣ</td><td class="p-2 border">Z</td><td class="p-2 border">−−··</td></tr>
+                        <tr><td class="p-2 border">ⴹ</td><td class="p-2 border">Ä</td><td class="p-2 border">·−·−</td></tr>
+                        <tr><td class="p-2 border">ⴳⵯ</td><td class="p-2 border">À</td><td class="p-2 border">·−−·−</td></tr>
+                        <tr><td class="p-2 border">ⴽⵯ</td><td class="p-2 border">Ç</td><td class="p-2 border">−·−··</td></tr>
+                        <tr><td class="p-2 border">ⵕ</td><td class="p-2 border">CH</td><td class="p-2 border">−−−−</td></tr>
+                        <tr><td class="p-2 border">ⵚ</td><td class="p-2 border">Ð</td><td class="p-2 border">··−−·</td></tr>
+                        <tr><td class="p-2 border">ⵟ</td><td class="p-2 border">È</td><td class="p-2 border">·−··−</td></tr>
+                        <tr><td class="p-2 border">ⵥ</td><td class="p-2 border">É</td><td class="p-2 border">··−··</td></tr>
+                        <tr><td class="p-2 border"></td><td class="p-2 border">Ñ</td><td class="p-2 border">−−·−−</td></tr>
+                        <tr><td class="p-2 border"></td><td class="p-2 border">Ö</td><td class="p-2 border">−−−·</td></tr>
+                        <tr><td class="p-2 border"></td><td class="p-2 border">Š</td><td class="p-2 border">···−·</td></tr>
+                        <tr><td class="p-2 border"></td><td class="p-2 border">Þ</td><td class="p-2 border">·−−··</td></tr>
+                        <tr><td class="p-2 border"></td><td class="p-2 border">Ü</td><td class="p-2 border">··−−</td></tr>
+                        <tr><td class="p-2 border"></td><td class="p-2 border">.</td><td class="p-2 border">·−·−·−</td></tr>
+                        <tr><td class="p-2 border"></td><td class="p-2 border">,</td><td class="p-2 border">−−··−−</td></tr>
+                        <tr><td class="p-2 border"></td><td class="p-2 border">?</td><td class="p-2 border">··−−··</td></tr>
+                        <tr><td class="p-2 border"></td><td class="p-2 border">!</td><td class="p-2 border">−·−·−−</td></tr>
+                        <tr><td class="p-2 border"></td><td class="p-2 border">/</td><td class="p-2 border">−··−·</td></tr>
+                        <tr><td class="p-2 border"></td><td class="p-2 border">(</td><td class="p-2 border">−·−−·</td></tr>
+                        <tr><td class="p-2 border"></td><td class="p-2 border">)</td><td class="p-2 border">−·−−·−</td></tr>
+                        <tr><td class="p-2 border"></td><td class="p-2 border">&</td><td class="p-2 border">·−···</td></tr>
+                        <tr><td class="p-2 border"></td><td class="p-2 border">:</td><td class="p-2 border">−−−···</td></tr>
+                        <tr><td class="p-2 border"></td><td class="p-2 border">;</td><td class="p-2 border">−·−·−·</td></tr>
+                        <tr><td class="p-2 border"></td><td class="p-2 border">=</td><td class="p-2 border">−···−</td></tr>
+                        <tr><td class="p-2 border"></td><td class="p-2 border">+</td><td class="p-2 border">·−·−·</td></tr>
+                        <tr><td class="p-2 border"></td><td class="p-2 border">-</td><td class="p-2 border">−····−</td></tr>
+                        <tr><td class="p-2 border"></td><td class="p-2 border">_</td><td class="p-2 border">··−−·−</td></tr>
+                        <tr><td class="p-2 border"></td><td class="p-2 border">"</td><td class="p-2 border">·−··−·</td></tr>
+                        <tr><td class="p-2 border"></td><td class="p-2 border">$</td><td class="p-2 border">···−··−</td></tr>
+                        <tr><td class="p-2 border"></td><td class="p-2 border">@</td><td class="p-2 border">·−−·−·</td></tr>
+                        <tr><td class="p-2 border"></td><td class="p-2 border">1</td><td class="p-2 border">·−−−−</td></tr>
+                        <tr><td class="p-2 border"></td><td class="p-2 border">2</td><td class="p-2 border">··−−−</td></tr>
+                        <tr><td class="p-2 border"></td><td class="p-2 border">3</td><td class="p-2 border">···−−</td></tr>
+                        <tr><td class="p-2 border"></td><td class="p-2 border">4</td><td class="p-2 border">····−</td></tr>
+                        <tr><td class="p-2 border"></td><td class="p-2 border">5</td><td class="p-2 border">·····</td></tr>
+                        <tr><td class="p-2 border"></td><td class="p-2 border">6</td><td class="p-2 border">−····</td></tr>
+                        <tr><td class="p-2 border"></td><td class="p-2 border">7</td><td class="p-2 border">−−···</td></tr>
+                        <tr><td class="p-2 border"></td><td class="p-2 border">8</td><td class="p-2 border">−−−··</td></tr>
+                        <tr><td class="p-2 border"></td><td class="p-2 border">9</td><td class="p-2 border">−−−−·</td></tr>
+                        <tr><td class="p-2 border"></td><td class="p-2 border">0</td><td class="p-2 border">−−−−−</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
